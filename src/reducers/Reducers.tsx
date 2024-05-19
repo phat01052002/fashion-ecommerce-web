@@ -2,7 +2,7 @@ const initialState = {
     numberCart: 0,
     role: 'GUEST',
 };
-const myReducer = (state = initialState, action) => {
+const myReducer = (state = initialState, action: any) => {
     switch (action.type) {
         case 'INCREMENT':
             return {

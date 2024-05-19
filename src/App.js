@@ -1,24 +1,31 @@
 import './App.css';
-import MainRouters from './routes/main-routes';
+import MainRouters from './routes/MainRoutes';
+import SelectTranslate from './components/SelectTranslate';
 import { createStore } from 'redux';
-import { useLayoutEffect } from 'react';
+import { useEffect } from 'react';
 import myReducer from './reducers/Reducers';
 import { Provider } from 'react-redux';
 import { change_role } from './reducers/Actions';
-import { typeRole } from './common/Common';
+import { typeLng, typeRole } from './common/Common';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { initI18n } from './translate/Translate';
+
 function App() {
     const store = createStore(myReducer);
-
+    initI18n(sessionStorage.getItem('lng') || typeLng.VN);
     //get role if have token
     const getRole = async () => {
         store.dispatch(change_role(typeRole.GUEST));
     };
-    useLayoutEffect(() => {
+    useEffect(() => {
         getRole();
     }, []);
     return (
         <Provider store={store}>
+            <SelectTranslate />
             <MainRouters />
+            <ToastContainer />
         </Provider>
     );
 }

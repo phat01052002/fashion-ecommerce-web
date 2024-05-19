@@ -14,7 +14,7 @@ export const set_to_zero = () => {
         type: 'SET_TO_ZERO',
     };
 };
-export const change_role = (payload) => {
+export const change_role = (payload: any) => {
     return {
         type: 'CHANGE_ROLE',
         payload,

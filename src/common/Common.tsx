@@ -9,4 +9,8 @@ export const typeRole = {
     ADMIN: 'ADMIN',
     SHOP: 'SHOP',
 };
+export const typeLng = {
+    VN: 'vn',
+    EN: 'en',
+};
 export const HOST_BE = 'http://localhost:8000';

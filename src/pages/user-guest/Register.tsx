@@ -3,11 +3,12 @@ import React, { useState } from 'react';
 import { filterInput, filterInputNumber } from '../../untils/Logic';
 import Button from '@mui/material/Button';
 import { useTranslation } from 'react-i18next';
-interface LoginProps {}
-const Login: React.FC<LoginProps> = (props) => {
-    const { t } = useTranslation();
+interface RegisterProps {}
+const Register: React.FC<RegisterProps> = (props) => {
     const [phone, setPhone] = useState<string>('');
     const [password, setPassword] = useState<string>('');
+
+    const { t } = useTranslation();
     return (
         <div className="mt-3 text-center">
             <div>
@@ -17,7 +18,7 @@ const Login: React.FC<LoginProps> = (props) => {
                     variant="outlined"
                     placeholder={t('auth.Phone')}
                     value={phone}
-                    onChange={(e) => filterInputNumber(e.target.value, setPhone)}
+                    onChange={(e) => filterInputNumber(e.target.defaultValue, setPhone)}
                 />
             </div>
             <div className="mt-3">
@@ -27,13 +28,13 @@ const Login: React.FC<LoginProps> = (props) => {
                     variant="outlined"
                     placeholder={t('auth.Password')}
                     value={password}
-                    onChange={(e) => filterInput(e.target.value, setPassword)}
+                    onChange={(e) => filterInput(e.target.defaultValue, setPassword)}
                 />
             </div>
             <div className="mt-6">
-                <Button variant="contained">{t('auth.Login')}</Button>
+                <Button variant="contained">{t('auth.Register')}</Button>
             </div>
         </div>
     );
 };
-export default Login;
+export default Register;
