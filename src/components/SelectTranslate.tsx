@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
-import Select, { SelectChangeEvent } from '@mui/material/Select';
+import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 import { initI18n } from '../translate/Translate';
-import { typeLng, typeRole } from '../common/Common';
+import { typeLng } from '../common/Common';
 import { useStore } from 'react-redux';
 interface SelectTranslateProps {}
 const SelectTranslate: React.FC<SelectTranslateProps> = (props) => {
-    const [lng, setLng] = useState<number>(sessionStorage.getItem('lng') == 'vn' ? 1 : 2 || 1);
+    const [lng, setLng] = useState<number>(sessionStorage.getItem('lng') == 'en' ? 2 : 1);
     const store = useStore();
     const changeLng = (e: any) => {
         setLng(e.target.value);

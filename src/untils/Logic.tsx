@@ -2,7 +2,7 @@ import { toast } from 'react-toastify';
 
 /// filter input
 export const filterInput = (value: any, setValue: any) => {
-    value = value.replace(/[^a-zA-Z0-9âáăạấầẩậặắẳòóọỏôồốổộơờớợởưừứửựùúụủìíịỉỳýỵỷ" "]/g, '');
+    //value = value.replace(/[^a-zA-Z0-9àáảâáăạấầẩậặắẳòóọỏôồốổộơờớợởưừứửựùúụủìíịỉỳýỵỷeêếệểềéẹẻèiếđ" "]/g, '');
     setValue(value);
 };
 export const filterInputWebsite = (value: any, setValue: any) => {
