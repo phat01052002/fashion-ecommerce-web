@@ -2,6 +2,7 @@ import React from 'react';
 import { useSelector, useStore } from 'react-redux';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { typeRole } from '../common/Common';
+import ForgetPassword from '../pages/user-guest/ForgetPassword';
 import HomePage from '../pages/user-guest/Homepage';
 import Login from '../pages/user-guest/Login';
 import Register from '../pages/user-guest/Register';
@@ -18,6 +19,7 @@ const MainRouters: React.FC<MainRoutersProps> = (props) => {
                     <Route path="/" element={<HomePage />}></Route>
                     <Route path="/login" element={<Login />}></Route>
                     <Route path="/register" element={<Register />}></Route>
+                    <Route path="/forget-password" element={<ForgetPassword />}></Route>
                 </Routes>
             </BrowserRouter>
         );

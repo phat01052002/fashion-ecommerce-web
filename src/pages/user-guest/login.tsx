@@ -97,6 +97,9 @@ const Login: React.FC<LoginProps> = (props) => {
                         {t('auth.Login')}
                     </Button>
                 </div>
+                <div className='mt-6 italic underline'>
+                    <a href="/forget-password">{t('auth.Forget password')}</a>
+                </div>
                 <div className="mt-6">
                     <Button variant="contained" fullWidth onClick={handleClickRegister}>
                         {t('auth.Register')}
