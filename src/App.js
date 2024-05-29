@@ -11,7 +11,6 @@ import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { initI18n } from './translate/Translate';
 import { GetApi } from './untils/Api';
-
 function App() {
     const store = createStore(myReducer);
     initI18n(sessionStorage.getItem('lng') || typeLng.VN);

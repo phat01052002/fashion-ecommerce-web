@@ -1,6 +1,35 @@
 import { toast } from 'react-toastify';
 
 /// filter input
+export const filterSpecialInput = (value: any, setValue: any) => {
+    value = value
+        .replace('?', '')
+        .replace('`', '')
+        .replace('!', '')
+        .replace('@', '')
+        .replace('#', '')
+        .replace('$', '')
+        .replace('%', '')
+        .replace('^', '')
+        .replace('&', '')
+        .replace('*', '')
+        .replace('(', '')
+        .replace(')', '')
+        .replace('_', '')
+        .replace('-', '')
+        .replace('+', '')
+        .replace('=', '')
+        .replace('<', '')
+        .replace('>', '')
+        .replace('/', '')
+        .replace(':', '')
+        .replace(';', '')
+        .replace('{', '')
+        .replace('}', '')
+        .replace('script', '');
+
+    setValue(value);
+};
 export const filterInput = (value: any, setValue: any) => {
     //value = value.replace(/[^a-zA-Z0-9àáảâáăạấầẩậặắẳòóọỏôồốổộơờớợởưừứửựùúụủìíịỉỳýỵỷeêếệểềéẹẻèiếđ" "]/g, '');
     setValue(value);
