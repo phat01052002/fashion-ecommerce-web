@@ -20,10 +20,34 @@ const SelectTranslate: React.FC<SelectTranslateProps> = (props) => {
         }
     };
     return (
-        <div className="mt-3">
-            <Select id="demo-simple-select" value={lng} onChange={(e) => changeLng(e)}>
-                <MenuItem value={1}>VN</MenuItem>
-                <MenuItem value={2}>EN</MenuItem>
+        <div className="mt-6 fixed bottom-20 right-1 z-10 bg-white">
+            <Select
+                id="demo-simple-select"
+                value={lng}
+                onChange={(e) => changeLng(e)}
+                style={{
+                    fontSize: '11px',
+                    height: '30px',
+                    padding: 0,
+                    margin: 0,
+                }}
+            >
+                <MenuItem
+                    value={1}
+                    style={{
+                        fontSize: '11px',
+                    }}
+                >
+                    VN
+                </MenuItem>
+                <MenuItem
+                    value={2}
+                    style={{
+                        fontSize: '11px',
+                    }}
+                >
+                    EN
+                </MenuItem>
             </Select>
         </div>
     );
