@@ -7,8 +7,6 @@
         "noEmit": true,
         "skipLibCheck": true,
         "resolveJsonModule": true,
-        "strict": true,
-        "types": ["node","webpack-env"],
-        "typeRoots": ["node_modules/@types", "src/types"]
+        "strict": true
     }
 }

@@ -5,7 +5,6 @@ import { typeRole } from '../common/Common';
 import ForgetPassword from '../pages/user-guest/ForgetPassword';
 import HomePage from '../pages/user-guest/Homepage';
 
-import Register from '../pages/user-guest/Register';
 import { ReducerProps } from '../reducers/ReducersProps';
 import LoginRegister from '../pages/user-guest/LoginRegister';
 import { Login } from '@mui/icons-material';
@@ -21,7 +20,6 @@ const MainRouters: React.FC<MainRoutersProps> = (props) => {
                     <Route path="/" element={<HomePage />}></Route>
                     <Route path="/login" element={<Login />}></Route>
                     <Route path="/login-register" element={<LoginRegister />}></Route>
-                    <Route path="/register" element={<Register />}></Route>
                     <Route path="/forget-password" element={<ForgetPassword />}></Route>
                 </Routes>
             </BrowserRouter>

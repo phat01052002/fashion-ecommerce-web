@@ -16,6 +16,7 @@ import { TextField } from '@mui/material';
 import { filterSpecialInput } from '../../../untils/Logic';
 import HighlightOffIcon from '@mui/icons-material/HighlightOff';
 import { typeRole } from '../../../common/Common';
+import MenuUser from './MenuUser';
 interface HeaderProps {}
 const Header: React.FC<HeaderProps> = (props) => {
     const nav = useNavigate();
@@ -27,6 +28,7 @@ const Header: React.FC<HeaderProps> = (props) => {
     const [openSearch, setOpenSearch] = useState<boolean>(false);
     const [search, setSearch] = useState<string>('');
     const role = useSelector((state: ReducerProps) => state.role);
+    const user = useSelector((state: ReducerProps) => state.user);
 
     //
     const typingTimeoutRef = useRef<any>(null);
@@ -68,7 +70,6 @@ const Header: React.FC<HeaderProps> = (props) => {
     }, [search]);
     return (
         <div>
-            {' '}
             <div className="box-shadow">
                 <div className="grid grid-cols-2 lg:grid-cols-6 gap-4 container ">
                     <div className="flex items-center justify-start lg:ml-0 ml-6">
@@ -106,10 +107,29 @@ const Header: React.FC<HeaderProps> = (props) => {
                             </Badge>
                         </span>
                         {role == typeRole.GUEST ? (
-                            <span className="mr-3 ml-3 cursor-pointer scale" onClick={() => nav('/login')}>
+                            <span className="mr-3 ml-3 cursor-pointer scale" onClick={() => nav('/login-register')}>
                                 <AccountCircleIcon color="primary" />
                             </span>
-                        ) : null}
+                        ) : (
+                            <div className="mr-3 ml-3 cursor-pointer scale">
+                                {user.image ? (
+                                    <>
+                                        {/* <img
+                                            className="border border-gray-500 rounded-full mt-2 mb-2"
+                                            style={{
+                                                width: 30,
+                                                height: 30,
+                                                objectFit: 'cover',
+                                            }}
+                                            src={user.image}
+                                        ></img> */}
+                                        <MenuUser avatar={user.image} />
+                                    </>
+                                ) : (
+                                    <AccountCircleIcon color="primary" />
+                                )}
+                            </div>
+                        )}
 
                         <span className="mr-3 ml-3 cursor-pointer scale lg:block hidden">
                             <SearchIcon color="primary" onClick={toggleDrawerSearch(true)} />

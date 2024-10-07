@@ -1,6 +1,7 @@
 const initialState = {
     numberCart: 0,
     role: 'GUEST',
+    user: {},
 };
 const myReducer = (state = initialState, action: any) => {
     switch (action.type) {
@@ -28,6 +29,11 @@ const myReducer = (state = initialState, action: any) => {
             return {
                 ...state,
                 role: action.payload,
+            };
+        case 'CHANGE_USER':
+            return {
+                ...state,
+                user: action.payload,
             };
         default:
             return state;

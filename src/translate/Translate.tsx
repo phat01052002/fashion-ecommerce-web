@@ -32,9 +32,13 @@ export const initI18n = (lng: string) => {
                         'Password is no strong': 'Mật khẩu yếu',
                         'Password and Re-password do not match': 'Không trùng khớp',
                         'Hello, Friend': 'Chào bạn',
-                        'Enter your personal details and start journey with us': 'Nhập thông tin cá nhân của bạn và bắt đầu hành trình cùng chúng tôi',
+                        'Enter your personal details and start journey with us':
+                            'Nhập thông tin cá nhân của bạn và bắt đầu hành trình cùng chúng tôi',
                         'Welcome Back': 'Chào mừng trở lại',
-                        'To login please enter your personal information': 'Để đăng nhập vui lòng nhập thông tin cá nhân của bạn',
+                        'Account is inActive': 'Tài khoản không hoạt động',
+                        'To login please enter your personal information':
+                            'Để đăng nhập vui lòng nhập thông tin cá nhân của bạn',
+                        'Account have already exist': 'Tài khoản đã tồn tại',
                     },
                     homepage: {
                         'Free returns within 30 days': 'Đổi trả miễn phí trong vòng 30 ngày',
@@ -46,6 +50,12 @@ export const initI18n = (lng: string) => {
                         Category: 'Danh Mục',
                         'Men Fashion': 'Thời Trang Nam',
                         'Women Fashion': 'Thời Trang Nữ',
+                    },
+                    user: {
+                        Profile: 'Thông Tin',
+                        Orders: 'Đơn Hàng',
+                        Logout: 'Đăng Xuất',
+                        Setting: 'Cài Đặt',
                     },
                 },
             },
@@ -77,9 +87,13 @@ export const initI18n = (lng: string) => {
                         'Password is no strong': 'Password is no strong',
                         'Password and Re-password do not match': 'Password and Re-password do not match',
                         'Hello, Friend': 'Hello, Friend',
-                        'Enter your personal details and start journey with us': 'Enter your personal details and start journey with us',
+                        'Enter your personal details and start journey with us':
+                            'Enter your personal details and start journey with us',
+                        'Account is inActive': 'Account is inActive',
                         'Welcome Back': 'Welcome Back',
-                        'To login please enter your personal information': 'To login please enter your personal information',
+                        'To login please enter your personal information':
+                            'To login please enter your personal information',
+                        'Account have already exist': 'Account have already exist',
                     },
                     homepage: {
                         'Free returns within 30 days': 'Free returns within 30 days',
@@ -91,6 +105,12 @@ export const initI18n = (lng: string) => {
                         Category: 'Category',
                         'Men Fashion': 'Men Fashion',
                         'Women Fashion': 'Women Fashion',
+                    },
+                    user: {
+                        Profile: 'Profile',
+                        Orders: 'Orders',
+                        Logout: 'Logout',
+                        Setting: 'Setting',
                     },
                 },
             },

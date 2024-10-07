@@ -14,4 +14,4 @@ export const typeLng = {
     VN: 'vn',
     EN: 'en',
 };
-export const HOST_BE = 'http://localhost:8000';
+export const HOST_BE = 'http://localhost:3038';
