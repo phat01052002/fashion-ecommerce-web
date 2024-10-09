@@ -114,7 +114,7 @@ const Header: React.FC<HeaderProps> = (props) => {
                             <div className="mr-3 ml-3 cursor-pointer scale">
                                 {user.image ? (
                                     <>
-                                        {/* <img
+                                        <img
                                             className="border border-gray-500 rounded-full mt-2 mb-2"
                                             style={{
                                                 width: 30,
@@ -122,11 +122,13 @@ const Header: React.FC<HeaderProps> = (props) => {
                                                 objectFit: 'cover',
                                             }}
                                             src={user.image}
-                                        ></img> */}
+                                        ></img>
                                         <MenuUser avatar={user.image} />
                                     </>
                                 ) : (
-                                    <AccountCircleIcon color="primary" />
+                                    <>
+                                        <MenuUser avatar={user.image} />
+                                    </>
                                 )}
                             </div>
                         )}

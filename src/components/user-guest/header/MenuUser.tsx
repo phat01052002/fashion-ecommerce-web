@@ -11,6 +11,8 @@ import { useStore } from 'react-redux';
 import { change_role, change_user } from '../../../reducers/Actions';
 import { typeRole } from '../../../common/Common';
 import { useNavigate } from 'react-router-dom';
+import { AlertLogout } from '../../alert/Alert';
+import { PostApi, PostGuestApi } from '../../../untils/Api';
 interface MenuUserProps {
     avatar: string | undefined;
 }
@@ -29,11 +31,19 @@ const MenuUser: React.FC<MenuUserProps> = (props) => {
         setAnchorElUser(null);
     };
     const handleClickLogout = async (e: any) => {
-        localStorage.removeItem('token');
-        store.dispatch(change_user({}));
-        store.dispatch(change_role(typeRole.GUEST));
+        const logOut = async () => {
+            const resLogout = await PostApi('/user/logout', localStorage.getItem('token'), {});
+            if (resLogout.data.message == 'Success') {
+                localStorage.removeItem('token');
+                localStorage.removeItem('refreshToken');
+                store.dispatch(change_user({}));
+                store.dispatch(change_role(typeRole.GUEST));
+                nav('/login-register');
+            } else {
+            }
+        };
         handleCloseUserMenu();
-        nav('/login-register');
+        AlertLogout(logOut);
     };
     return (
         <Box sx={{ flexGrow: 0 }}>

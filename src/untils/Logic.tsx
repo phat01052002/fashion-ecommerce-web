@@ -1,4 +1,5 @@
 import { toast } from 'react-toastify';
+import { passwordStrength } from 'check-password-strength';
 
 /// filter input
 export const filterSpecialInput = (value: any, setValue: any) => {
@@ -34,6 +35,11 @@ export const filterInput = (value: any, setValue: any) => {
     //value = value.replace(/[^a-zA-Z0-9àáảâáăạấầẩậặắẳòóọỏôồốổộơờớợởưừứửựùúụủìíịỉỳýỵỷeêếệểềéẹẻèiếđ" "]/g, '');
     setValue(value);
 };
+export const filterPassword = (value: any, setValue: any, setStrength: any) => {
+    //value = value.replace(/[^a-zA-Z0-9àáảâáăạấầẩậặắẳòóọỏôồốổộơờớợởưừứửựùúụủìíịỉỳýỵỷeêếệểềéẹẻèiếđ" "]/g, '');
+    setValue(value);
+    setStrength(passwordStrength(value).id);
+};
 export const filterInputWebsite = (value: any, setValue: any) => {
     value = value.replace(/[^a-zA-Z0-9./]/g, '');
     setValue(value);
@@ -42,17 +48,13 @@ export const filterInputNumber = (value: any, setValue: any) => {
     value = value.replace(/[^0-9]/g, '');
     setValue(value);
 };
-export const filterEmail = (event: any, setValue: any) => {
-    const input = event.target;
-    const email = input.value;
-
+export const checkIsEmail = (email: string) => {
     // Sử dụng biểu thức chính quy để kiểm tra định dạng email
     const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-
     if (!emailRegex.test(email)) {
-        toastError('Không đúng định dạng email');
-        setValue('');
+        return false;
     } else {
+        return true;
     }
 };
 export const toastError = (text: string) => {
