@@ -9,13 +9,7 @@ import 'firebase/compat/auth';
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
-    apiKey: 'AIzaSyDET2O34jHukJuyI5HtcGFpjDeIYabw6Jw',
-    authDomain: 'fashion-eccommerce-website.firebaseapp.com',
-    projectId: 'fashion-eccommerce-website',
-    storageBucket: 'fashion-eccommerce-website.appspot.com',
-    messagingSenderId: '902941665572',
-    appId: '1:902941665572:web:948f12b1934bae18a0ebb1',
-    measurementId: 'G-DC6VNS8R6X',
+   
 };
 
 // Initialize Firebase
