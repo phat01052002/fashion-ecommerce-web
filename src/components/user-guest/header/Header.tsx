@@ -70,8 +70,8 @@ const Header: React.FC<HeaderProps> = (props) => {
     }, [search]);
     return (
         <div>
-            <div className="box-shadow">
-                <div className="grid grid-cols-2 lg:grid-cols-6 gap-4 container ">
+            <div className="box-shadow bg-white z-50">
+                <div className="grid grid-cols-2 lg:grid-cols-6 gap-4 container h-16">
                     <div className="flex items-center justify-start lg:ml-0 ml-6">
                         <div
                             className="lg:hidden flex items-center justify-center mr-6 cursor-pointer"

@@ -45,6 +45,11 @@ const MenuUser: React.FC<MenuUserProps> = (props) => {
         handleCloseUserMenu();
         AlertLogout(logOut);
     };
+    const handleClickInfoUser = () => {
+        handleCloseUserMenu();
+
+        nav('/info-user');
+    };
     return (
         <Box sx={{ flexGrow: 0 }}>
             <Tooltip title="Open settings">
@@ -68,7 +73,7 @@ const MenuUser: React.FC<MenuUserProps> = (props) => {
                 open={Boolean(anchorElUser)}
                 onClose={handleCloseUserMenu}
             >
-                <MenuItem key={settings[0]} onClick={handleCloseUserMenu}>
+                <MenuItem key={settings[0]} onClick={handleClickInfoUser}>
                     <Typography sx={{ textAlign: 'center' }}>{settings[0]}</Typography>
                 </MenuItem>
                 <MenuItem key={settings[1]} onClick={handleCloseUserMenu}>

@@ -22,7 +22,10 @@ api.interceptors.response.use(
             });
         }
         if (response && response.status === 404) {
-            //redirect 404 page
+            return Promise.resolve({
+                status: 200,
+                data: { success: false, message: '404' },
+            });
         }
         if (response && response.status === 403) {
             localStorage.removeItem('token');

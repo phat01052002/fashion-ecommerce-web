@@ -2,7 +2,6 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
     checkIsEmail,
     filterInput,
-    filterInputNumber,
     filterPassword,
     toastError,
     toastSuccess,
@@ -11,10 +10,10 @@ import {
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { GetApi, PostGuestApi } from '../../untils/Api';
-import { RecaptchaVerifier, signInWithPhoneNumber } from 'firebase/auth';
 import { change_role, change_user } from '../../reducers/Actions';
 import { passwordStrength } from 'check-password-strength';
 import { useStore } from 'react-redux';
+import GoogleIcon from '@mui/icons-material/Google';
 import {
     Container,
     RegisterContainer,
@@ -31,17 +30,14 @@ import {
     Input,
     Button,
 } from '../../components/ComponentsLogin';
-import Slider from '@mui/material/Slider';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
-import PhoneInput from 'react-phone-input-2';
-import 'react-phone-input-2/lib/style.css';
 import OtpInput from 'react-otp-input';
 import Dialog from '@mui/material/Dialog';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import { auth } from '../../firebase/Firebase';
+import axios from 'axios';
+import CheckPasswordMeter from '../../components/user-guest/CheckPasswordMeter';
 function LoginRegister() {
-    const [recaptchaVerifier, setRecapchaVerifier] = useState<RecaptchaVerifier | null>(null);
     const [logIn, toggle] = React.useState(true);
     const { t } = useTranslation();
     const [email, setEmail] = useState<string>('');
@@ -57,18 +53,18 @@ function LoginRegister() {
     const [time, setTime] = useState(300);
     const [isRunning, setIsRunning] = useState(false);
     const intervalRef = useRef<any>(null);
-
     //
     const [comfirm, setComfirm] = useState<any>([]);
     const [otp, setOtp] = useState<string>('');
     //
-    const [openOtp, setOpenOtp] = useState<boolean>(true);
+    const [openOtp, setOpenOtp] = useState<boolean>(false);
     //
     const nav = useNavigate();
     if (localStorage.getItem('token')) {
         nav('/');
     }
     const store = useStore();
+    //
 
     //Handle login
     const handleClickLogin = async (e: any) => {
@@ -221,6 +217,74 @@ function LoginRegister() {
         }
         handleResendOtpRegister();
     };
+
+    const handleClickSignWithGoogle = (e: any) => {
+        e.preventDefault();
+
+        if (process.env.REACT_APP_ID_CLIENT_GG) {
+            const url_gg = new URL(
+                `https://accounts.google.com/o/oauth2/auth?scope=email&redirect_uri=http://localhost:3000/login-register&response_type=code&client_id=${process.env.REACT_APP_ID_CLIENT_GG}&approval_prompt=force`,
+            );
+            window.location.href = url_gg.toString();
+        }
+    };
+    const getGmail = useCallback(async () => {
+        const query = new URLSearchParams(window.location.search);
+        const gmailCode = query.get('code');
+        if (gmailCode != null) {
+            try {
+                let data = JSON.stringify({
+                    client_id: process.env.REACT_APP_ID_CLIENT_GG,
+                    client_secret: process.env.REACT_APP_GOOGLE_CLIENT_SECRET,
+                    redirect_uri: 'http://localhost:3000/login-register',
+                    code: gmailCode,
+                    grant_type: 'authorization_code',
+                });
+
+                let config = {
+                    method: 'post',
+                    maxBodyLength: Infinity,
+                    url: 'https://accounts.google.com/o/oauth2/token',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    data: data,
+                };
+
+                const response = await axios.request(config);
+                //save access token to sessionStorage
+                sessionStorage.setItem('gmailAccesstoken', JSON.stringify(response.data.access_token));
+                if (sessionStorage.getItem('gmailAccesstoken')) {
+                    let config = {
+                        method: 'get',
+                        maxBodyLength: Infinity,
+                        url: `https://www.googleapis.com/oauth2/v1/userinfo?access_token=${sessionStorage.getItem(
+                            'gmailAccesstoken',
+                        )}`,
+                        headers: {},
+                    };
+                    const response = await axios.request(config);
+                    //save gmail to sessionStorage
+                    const loginGmail = await PostGuestApi('/auth/login-gmail', {
+                        email: response.data.email,
+                        password: response.data.id,
+                    });
+                    if (loginGmail.data.message == 'Login success') {
+                        sessionStorage.removeItem('gmailAccesstoken');
+                        localStorage.setItem('token', loginGmail.data.accessToken);
+                        localStorage.setItem('refreshToken', loginGmail.data.refreshToken);
+                        const res_role = await GetApi(`/user/get-role`, loginGmail.data.accessToken);
+                        store.dispatch(change_role(res_role.data.role));
+                        const res_user = await GetApi('/user/get-user', loginGmail.data.accessToken);
+                        store.dispatch(change_user(res_user.data.user));
+                        nav('/');
+                    }
+                }
+            } catch (e) {
+                console.log(e);
+            }
+        }
+    }, []);
     useEffect(() => {
         if (isRunning) {
             handleStart();
@@ -231,6 +295,9 @@ function LoginRegister() {
             }
         };
     }, [isRunning]);
+    useEffect(() => {
+        getGmail();
+    }, []);
     return (
         <div className="mt-3 flex justify-center align-center" style={{}}>
             <div
@@ -262,22 +329,8 @@ function LoginRegister() {
                                     {isHidePassword ? <VisibilityIcon /> : <VisibilityOffIcon />}
                                 </span>
                             </span>
-                            {password ? (
-                                <Slider
-                                    sx={{
-                                        color: strength >= 3 ? 'green' : 'gray',
-                                        '& .MuiSlider-thumb': {
-                                            backgroundColor: strength >= 3 ? 'green' : 'gray',
-                                        },
-                                        '& .MuiSlider-track': {
-                                            backgroundColor: strength >= 3 ? 'green' : 'gray',
-                                        },
-                                    }}
-                                    aria-label="Volume"
-                                    value={strength * 25}
-                                    disabled
-                                />
-                            ) : null}
+                            <div className='w-full h-5'> {password ? <CheckPasswordMeter password={password} /> : null}</div>
+
                             <span className="w-full relative">
                                 <Input
                                     type={isHidePassword ? 'password' : 'text'}
@@ -289,7 +342,7 @@ function LoginRegister() {
                                     {isHidePassword ? <VisibilityIcon /> : <VisibilityOffIcon />}
                                 </span>
                             </span>
-                            <Button id="register-button" onClick={(e) => handleClickRegister(e)}>
+                            <Button className='w-full mt-3' id="register-button" onClick={(e) => handleClickRegister(e)}>
                                 {t('auth.Register')}
                             </Button>
                         </Form>
@@ -323,8 +376,13 @@ function LoginRegister() {
                                     {isHidePassword ? <VisibilityIcon /> : <VisibilityOffIcon />}
                                 </span>
                             </span>
-                            <Anchor href="#">{t('auth.Forget password')}</Anchor>
-                            <Button onClick={(e) => handleClickLogin(e)}>{t('auth.Login')}</Button>
+                            <Anchor className='italic' href="forget-password">{t('auth.Forget password')}</Anchor>
+                            <Button className='w-full' onClick={(e) => handleClickLogin(e)}>{t('auth.Login')}</Button>
+                            <div className="mt-3 font-bold">---</div>
+
+                            <Button className='mt-3 w-full' onClick={(e) => handleClickSignWithGoogle(e)}>
+                                <GoogleIcon />
+                            </Button>
                         </Form>
                     </LogInContainer>
 

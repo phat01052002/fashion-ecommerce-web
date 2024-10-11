@@ -8,6 +8,7 @@ import HomePage from '../pages/user-guest/Homepage';
 import { ReducerProps } from '../reducers/ReducersProps';
 import LoginRegister from '../pages/user-guest/LoginRegister';
 import { Login } from '@mui/icons-material';
+import InfoUser from '../pages/user-guest/InfoUser';
 interface MainRoutersProps {}
 const MainRouters: React.FC<MainRoutersProps> = (props) => {
     const store = useStore();
@@ -21,6 +22,7 @@ const MainRouters: React.FC<MainRoutersProps> = (props) => {
                     <Route path="/login" element={<Login />}></Route>
                     <Route path="/login-register" element={<LoginRegister />}></Route>
                     <Route path="/forget-password" element={<ForgetPassword />}></Route>
+                    <Route path="/info-user" element={<InfoUser />}></Route>
                 </Routes>
             </BrowserRouter>
         );
