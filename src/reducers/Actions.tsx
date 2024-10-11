@@ -33,3 +33,10 @@ export const change_user = (payload: any) => {
         payload,
     };
 };
+
+export const change_is_loading = (payload: any) => {
+    return {
+        type: 'CHANGE_IS_LOADING',
+        payload,
+    };
+};

@@ -1,10 +1,10 @@
 import axios from 'axios';
 import { HOST_BE } from '../common/Common';
+import { toastError } from './Logic';
 
 const api = axios.create({
     baseURL: HOST_BE,
 });
-
 api.interceptors.response.use(
     (response) => {
         // Nếu phản hồi thành công, trả về dữ liệu
@@ -16,12 +16,16 @@ api.interceptors.response.use(
         // Kiểm tra mã trạng thái
         if (response && response.status === 409) {
             // Thay đổi mã trạng thái thành 200 và trả về thông báo
+            toastError('Fail');
+
             return Promise.resolve({
                 status: 200,
                 data: { success: false, message: '409' },
             });
         }
         if (response && response.status === 404) {
+            toastError('Fail');
+
             return Promise.resolve({
                 status: 200,
                 data: { success: false, message: '404' },

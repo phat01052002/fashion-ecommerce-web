@@ -91,10 +91,38 @@ const Header: React.FC<HeaderProps> = (props) => {
                     </div>
 
                     <div className="lg:flex hidden flex items-center justify-center col-span-4">
-                        <span className="mr-3 ml-3 cursor-pointer font-bold">{t('homepage.Category')}</span>
-                        <span className="mr-3 ml-3 cursor-pointer font-bold">{t('homepage.New Product')}</span>
-                        <span className="mr-3 ml-3 cursor-pointer font-bold">{t('homepage.Men Fashion')}</span>
-                        <span className="mr-3 ml-3 cursor-pointer font-bold">{t('homepage.Women Fashion')}</span>
+                        <span
+                            style={{
+                                fontSize: '18px',
+                            }}
+                            className="mr-3 ml-3 cursor-pointer font-bold "
+                        >
+                            {t('homepage.Category')}
+                        </span>
+                        <span
+                            style={{
+                                fontSize: '18px',
+                            }}
+                            className="mr-3 ml-3 cursor-pointer font-bold "
+                        >
+                            {t('homepage.New Product')}
+                        </span>
+                        <span
+                            style={{
+                                fontSize: '18px',
+                            }}
+                            className="mr-3 ml-3 cursor-pointer font-bold "
+                        >
+                            {t('homepage.Men Fashion')}
+                        </span>
+                        <span
+                            style={{
+                                fontSize: '18px',
+                            }}
+                            className="mr-3 ml-3 cursor-pointer font-bold "
+                        >
+                            {t('homepage.Women Fashion')}
+                        </span>
                     </div>
 
                     <div className="flex items-center justify-end">
@@ -112,22 +140,13 @@ const Header: React.FC<HeaderProps> = (props) => {
                             </span>
                         ) : (
                             <div className="mr-3 ml-3 cursor-pointer scale">
-                                {user.image ? (
+                                {user.image != null ? (
                                     <>
-                                        <img
-                                            className="border border-gray-500 rounded-full mt-2 mb-2"
-                                            style={{
-                                                width: 30,
-                                                height: 30,
-                                                objectFit: 'cover',
-                                            }}
-                                            src={user.image}
-                                        ></img>
                                         <MenuUser avatar={user.image} />
                                     </>
                                 ) : (
                                     <>
-                                        <MenuUser avatar={user.image} />
+                                        <MenuUser avatar={''} />
                                     </>
                                 )}
                             </div>

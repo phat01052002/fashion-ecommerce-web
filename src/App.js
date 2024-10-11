@@ -1,5 +1,7 @@
 import './App.css';
 import MainRouters from './routes/MainRoutes';
+import LoadingProcess from './components/loading/LoadingProcess';
+
 import SelectTranslate from './components/SelectTranslate';
 import { createStore } from 'redux';
 import { useEffect } from 'react';
@@ -11,6 +13,7 @@ import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { initI18n } from './translate/Translate';
 import { GetApi } from './untils/Api';
+
 function App() {
     const store = createStore(myReducer);
     initI18n(sessionStorage.getItem('lng') || typeLng.VN);
@@ -33,6 +36,7 @@ function App() {
             <SelectTranslate />
             <MainRouters />
             <ToastContainer />
+            <LoadingProcess />
         </Provider>
     );
 }

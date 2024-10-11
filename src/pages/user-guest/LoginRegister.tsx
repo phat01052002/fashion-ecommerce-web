@@ -1,16 +1,9 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import {
-    checkIsEmail,
-    filterInput,
-    filterPassword,
-    toastError,
-    toastSuccess,
-    toastWarning,
-} from '../../untils/Logic';
+import { checkIsEmail, filterInput, filterPassword, toastError, toastSuccess, toastWarning } from '../../untils/Logic';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { GetApi, PostGuestApi } from '../../untils/Api';
-import { change_role, change_user } from '../../reducers/Actions';
+import { change_is_loading, change_role, change_user } from '../../reducers/Actions';
 import { passwordStrength } from 'check-password-strength';
 import { useStore } from 'react-redux';
 import GoogleIcon from '@mui/icons-material/Google';
@@ -73,7 +66,10 @@ function LoginRegister() {
             return toastWarning('Không đúng định dạng email');
         }
         if (email && password) {
+            store.dispatch(change_is_loading(true));
             const res = await PostGuestApi(`/auth/login`, { email: email, password: password });
+            store.dispatch(change_is_loading(false));
+
             if (res.data.message == 'Phone or password is incorrect') {
                 toastWarning(t('auth.Account is incorrect'));
                 return null;
@@ -84,14 +80,18 @@ function LoginRegister() {
                 setIsRunning(true);
                 handleResendOtpRegister();
                 openDialog();
+                store.dispatch(change_is_loading(false));
             }
             if (res.data.message == 'Login success') {
+                store.dispatch(change_is_loading(true));
                 localStorage.setItem('token', res.data.accessToken);
                 localStorage.setItem('refreshToken', res.data.refreshToken);
                 const res_role = await GetApi(`/user/get-role`, res.data.accessToken);
                 store.dispatch(change_role(res_role.data.role));
                 const res_user = await GetApi('/user/get-user', res.data.accessToken);
                 store.dispatch(change_user(res_user.data.user));
+                store.dispatch(change_is_loading(false));
+
                 nav('/');
             }
         } else {
@@ -136,12 +136,14 @@ function LoginRegister() {
                     if (res.data.message == 'Account have already exist') {
                         setEmail('');
                         setPassword('');
+                        setRePassword('');
                         toastError(t('auth.Account have already exist'));
                         return null;
                     }
                     if (res.data.message == 'Account creation fail') {
                         setEmail('');
                         setPassword('');
+                        setRePassword('');
                         return null;
                     }
                     if (res.data.message == 'Email sent successfully') {
@@ -329,7 +331,10 @@ function LoginRegister() {
                                     {isHidePassword ? <VisibilityIcon /> : <VisibilityOffIcon />}
                                 </span>
                             </span>
-                            <div className='w-full h-5'> {password ? <CheckPasswordMeter password={password} /> : null}</div>
+                            <div className="w-full h-5">
+                                {' '}
+                                {password ? <CheckPasswordMeter password={password} /> : null}
+                            </div>
 
                             <span className="w-full relative">
                                 <Input
@@ -342,7 +347,11 @@ function LoginRegister() {
                                     {isHidePassword ? <VisibilityIcon /> : <VisibilityOffIcon />}
                                 </span>
                             </span>
-                            <Button className='w-full mt-3' id="register-button" onClick={(e) => handleClickRegister(e)}>
+                            <Button
+                                className="w-full mt-3"
+                                id="register-button"
+                                onClick={(e) => handleClickRegister(e)}
+                            >
                                 {t('auth.Register')}
                             </Button>
                         </Form>
@@ -376,11 +385,15 @@ function LoginRegister() {
                                     {isHidePassword ? <VisibilityIcon /> : <VisibilityOffIcon />}
                                 </span>
                             </span>
-                            <Anchor className='italic' href="forget-password">{t('auth.Forget password')}</Anchor>
-                            <Button className='w-full' onClick={(e) => handleClickLogin(e)}>{t('auth.Login')}</Button>
+                            <Anchor className="italic" href="forget-password">
+                                {t('auth.Forget password')}
+                            </Anchor>
+                            <Button className="w-full" onClick={(e) => handleClickLogin(e)}>
+                                {t('auth.Login')}
+                            </Button>
                             <div className="mt-3 font-bold">---</div>
 
-                            <Button className='mt-3 w-full' onClick={(e) => handleClickSignWithGoogle(e)}>
+                            <Button className="mt-3 w-full" onClick={(e) => handleClickSignWithGoogle(e)}>
                                 <GoogleIcon />
                             </Button>
                         </Form>

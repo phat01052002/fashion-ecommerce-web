@@ -2,6 +2,7 @@ const initialState = {
     numberCart: 0,
     role: 'GUEST',
     user: {},
+    isLoading: false,
 };
 const myReducer = (state = initialState, action: any) => {
     switch (action.type) {
@@ -34,6 +35,11 @@ const myReducer = (state = initialState, action: any) => {
             return {
                 ...state,
                 user: action.payload,
+            };
+        case 'CHANGE_IS_LOADING':
+            return {
+                ...state,
+                isLoading: action.payload,
             };
         default:
             return state;

@@ -27,3 +27,17 @@ export const AlertSaveInfo = (save: any) => {
         }
     });
 };
+
+export const AlertAddShop = (createShop: any) => {
+    Swal.fire({
+        title: 'Tạo mới shop ?',
+        showDenyButton: true,
+        confirmButtonText: 'Yes',
+        denyButtonText: `No`,
+    }).then((result: any) => {
+        if (result.isConfirmed) {
+            createShop();
+        } else if (result.isDenied) {
+        }
+    });
+};

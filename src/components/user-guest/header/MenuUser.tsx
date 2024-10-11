@@ -3,18 +3,18 @@ import Box from '@mui/material/Box';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import Menu from '@mui/material/Menu';
-import Avatar from '@mui/material/Avatar';
 import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import { useTranslation } from 'react-i18next';
 import { useStore } from 'react-redux';
 import { change_role, change_user } from '../../../reducers/Actions';
-import { typeRole } from '../../../common/Common';
+import { HOST_BE, typeRole } from '../../../common/Common';
 import { useNavigate } from 'react-router-dom';
 import { AlertLogout } from '../../alert/Alert';
 import { PostApi, PostGuestApi } from '../../../untils/Api';
+import { Avatar } from '@mui/material';
 interface MenuUserProps {
-    avatar: string | undefined;
+    avatar: String;
 }
 
 const MenuUser: React.FC<MenuUserProps> = (props) => {
@@ -54,7 +54,7 @@ const MenuUser: React.FC<MenuUserProps> = (props) => {
         <Box sx={{ flexGrow: 0 }}>
             <Tooltip title="Open settings">
                 <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                    <Avatar sx={{ width: 27, height: 27 }} className="mt-2 mb-2" alt="Remy Sharp" src={avatar} />
+                    <Avatar sx={{ width: 27, height: 27 }} className="mt-2 mb-2" src={`${HOST_BE}/${avatar}`} />
                 </IconButton>
             </Tooltip>
             <Menu
