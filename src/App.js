@@ -15,6 +15,7 @@ import { initI18n } from './translate/Translate';
 import { GetApi } from './untils/Api';
 
 function App() {
+    
     const store = createStore(myReducer);
     initI18n(sessionStorage.getItem('lng') || typeLng.VN);
     //get role if have token
