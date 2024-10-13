@@ -117,7 +117,7 @@ const AddressCreate: React.FC<AddressCreateProps> = (props) => {
                 setDistrict(null);
                 setWard(null);
                 store.dispatch(add_item_address(resSaveAddress.data.Address));
-                nav('/address');
+                nav('/user/address');
             }
         } else {
             toastWarning(t('auth.Please enter complete information'));

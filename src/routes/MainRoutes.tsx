@@ -54,7 +54,6 @@ const MainRouters: React.FC<MainRoutersProps> = (props) => {
                     <Route path="/user/address/create" element={<AddressCreate />}></Route>
                     <Route path="/user/address/edit/:addressId" element={<AddressEdit />}></Route>
                     <Route path="/user/register-shop" element={<RegisterShop />}></Route>
-
                     <Route path="/shop/:shopId" element={<ShopHome />}></Route>
                 </Routes>
             </BrowserRouter>
