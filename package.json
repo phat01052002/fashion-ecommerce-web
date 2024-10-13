@@ -67,6 +67,6 @@
   "devDependencies": {
     "@types/webpack-env": "^1.18.5",
     "tailwindcss": "^3.4.3",
-    "typescript": "^5.4.5"
+    "typescript": "^5.1.6"
   }
 }
