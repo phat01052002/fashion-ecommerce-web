@@ -3,4 +3,5 @@ export interface ReducerProps {
     role: string;
     user: any;
     isLoading: boolean;
+    listAddress: any;
 }

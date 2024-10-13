@@ -7,15 +7,15 @@ import {
     toastError,
     toastSuccess,
     toastWarning,
-} from '../../untils/Logic';
+} from '../../../untils/Logic';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { PostApi, PostGuestApi } from '../../untils/Api';
+import { PostApi, PostGuestApi } from '../../../untils/Api';
 import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import { useStore } from 'react-redux';
 import Dialog from '@mui/material/Dialog';
-import CheckPasswordMeter from '../../components/user-guest/CheckPasswordMeter';
+import CheckPasswordMeter from '../../../components/user-guest/CheckPasswordMeter';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { passwordStrength } from 'check-password-strength';
 
@@ -34,7 +34,7 @@ import {
     Title,
     Input,
     Button,
-} from '../../components/ComponentsLogin';
+} from '../../../components/ComponentsLogin';
 import OTPInput from 'react-otp-input';
 interface ForgetPasswordProps {}
 const ForgetPassword: React.FC<ForgetPasswordProps> = (props) => {

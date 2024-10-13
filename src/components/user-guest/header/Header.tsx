@@ -139,7 +139,7 @@ const Header: React.FC<HeaderProps> = (props) => {
                                 <AccountCircleIcon color="primary" />
                             </span>
                         ) : (
-                            <div className="mr-3 ml-3 cursor-pointer scale">
+                            <div className="mr-3 ml-3 cursor-pointer">
                                 {user.image != null ? (
                                     <>
                                         <MenuUser avatar={user.image} />

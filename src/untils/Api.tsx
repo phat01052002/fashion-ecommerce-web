@@ -16,11 +16,19 @@ api.interceptors.response.use(
         // Kiểm tra mã trạng thái
         if (response && response.status === 409) {
             // Thay đổi mã trạng thái thành 200 và trả về thông báo
-            toastError('Fail');
 
             return Promise.resolve({
                 status: 200,
-                data: { success: false, message: '409' },
+                data: { success: false, message: response.data.message },
+            });
+        }
+        if (response && response.status === 502) {
+            // Thay đổi mã trạng thái thành 200 và trả về thông báo
+            toastError('Fail');
+
+            return Promise.resolve({
+                status: 204,
+                data: { success: false, message: '502' },
             });
         }
         if (response && response.status === 404) {

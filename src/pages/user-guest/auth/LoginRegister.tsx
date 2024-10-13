@@ -1,9 +1,9 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { checkIsEmail, filterInput, filterPassword, toastError, toastSuccess, toastWarning } from '../../untils/Logic';
+import { checkIsEmail, filterInput, filterPassword, toastError, toastSuccess, toastWarning } from '../../../untils/Logic';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { GetApi, PostGuestApi } from '../../untils/Api';
-import { change_is_loading, change_role, change_user } from '../../reducers/Actions';
+import { GetApi, PostGuestApi } from '../../../untils/Api';
+import { change_is_loading, change_role, change_user } from '../../../reducers/Actions';
 import { passwordStrength } from 'check-password-strength';
 import { useStore } from 'react-redux';
 import GoogleIcon from '@mui/icons-material/Google';
@@ -22,14 +22,14 @@ import {
     Title,
     Input,
     Button,
-} from '../../components/ComponentsLogin';
+} from '../../../components/ComponentsLogin';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import OtpInput from 'react-otp-input';
 import Dialog from '@mui/material/Dialog';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import axios from 'axios';
-import CheckPasswordMeter from '../../components/user-guest/CheckPasswordMeter';
+import CheckPasswordMeter from '../../../components/user-guest/CheckPasswordMeter';
 function LoginRegister() {
     const [logIn, toggle] = React.useState(true);
     const { t } = useTranslation();

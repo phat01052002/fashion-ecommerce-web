@@ -3,7 +3,7 @@ import MainRouters from './routes/MainRoutes';
 import LoadingProcess from './components/loading/LoadingProcess';
 
 import SelectTranslate from './components/SelectTranslate';
-import { createStore } from 'redux';
+import { applyMiddleware, createStore } from 'redux';
 import { useEffect } from 'react';
 import myReducer from './reducers/Reducers';
 import { Provider, useSelector } from 'react-redux';
@@ -13,10 +13,10 @@ import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { initI18n } from './translate/Translate';
 import { GetApi } from './untils/Api';
+import {thunk} from 'redux-thunk';
 
 function App() {
-    
-    const store = createStore(myReducer);
+    const store = createStore(myReducer, applyMiddleware(thunk));
     initI18n(sessionStorage.getItem('lng') || typeLng.VN);
     //get role if have token
     const getRoleAndUser = async () => {

@@ -48,13 +48,13 @@ const MenuUser: React.FC<MenuUserProps> = (props) => {
     const handleClickInfoUser = () => {
         handleCloseUserMenu();
 
-        nav('/info-user');
+        nav('/user/info-user');
     };
     return (
         <Box sx={{ flexGrow: 0 }}>
             <Tooltip title="Open settings">
                 <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                    <Avatar sx={{ width: 27, height: 27 }} className="mt-2 mb-2" src={`${HOST_BE}/${avatar}`} />
+                    <Avatar sx={{ width: 27, height: 27 }} src={`${HOST_BE}/${avatar}`} />
                 </IconButton>
             </Tooltip>
             <Menu

@@ -2,6 +2,7 @@ const initialState = {
     numberCart: 0,
     role: 'GUEST',
     user: {},
+    listAddress: [],
     isLoading: false,
 };
 const myReducer = (state = initialState, action: any) => {
@@ -40,6 +41,28 @@ const myReducer = (state = initialState, action: any) => {
             return {
                 ...state,
                 isLoading: action.payload,
+            };
+        case 'DELETE_ITEM_ADDRESS':
+            return {
+                ...state,
+                listAddress: state.listAddress.filter((item: any, index: any) => index !== action.index),
+            };
+        case 'CHANGE_LIST_ADDRESS':
+            return {
+                ...state,
+                listAddress: action.payload,
+            };
+        case 'ADD_ITEM_ADDRESS':
+            return {
+                ...state,
+                listAddress: action.payload,
+            };
+        case 'CHANGE_ITEM_ADDRESS':
+            return {
+                ...state,
+                listAddress: state.listAddress.map((address, i) =>
+                    i === action.payload.index ? action.payload.address : address,
+                ),
             };
         default:
             return state;

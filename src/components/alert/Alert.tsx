@@ -41,3 +41,17 @@ export const AlertAddShop = (createShop: any) => {
         }
     });
 };
+
+export const Alert = (handleBack: any, title: string) => {
+    Swal.fire({
+        title: title,
+        showDenyButton: true,
+        confirmButtonText: 'Yes',
+        denyButtonText: `No`,
+    }).then((result: any) => {
+        if (result.isConfirmed) {
+            handleBack();
+        } else if (result.isDenied) {
+        }
+    });
+};

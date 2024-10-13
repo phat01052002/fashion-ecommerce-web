@@ -21,33 +21,37 @@ const LeftNav: React.FC<LeftNavProps> = (props) => {
     const user = useSelector((state: ReducerProps) => state.user);
     const handleClickShop = () => {
         if (user.shopId == null) {
-            AlertAddShop(() => {});
+            AlertAddShop(() => {
+                nav('/user/register-shop');
+            });
+        } else {
+            window.location.href = `/shop/${user.shopId}`;
         }
     };
     return (
         <div className="p-6 rounded-lg mt-4">
             <div
-                 className={`transition-transform duration-500 ease-linear transform hover:translate-x-4 rounded p-4 cursor-pointer flex items-center ${
+                className={`transition-transform duration-500 ease-linear transform hover:translate-x-4 rounded p-4 cursor-pointer flex items-center ${
                     index == 0
                         ? 'bg-blue-200 font-bold opacity-70 hover:opacity-50'
                         : 'hover:bg-blue-200 hover:opacity-70'
                 }`}
-                onClick={() => nav('/info-user')}
+                onClick={() => nav('/user/info-user')}
             >
                 <PersonIcon /> &nbsp;<div>{t('user.Profile')}</div>
             </div>
             <div
-                 className={`transition-transform duration-500 ease-linear transform hover:translate-x-4 rounded p-4 cursor-pointer flex items-center mt-6 ${
+                className={`transition-transform duration-500 ease-linear transform hover:translate-x-4 rounded p-4 cursor-pointer flex items-center mt-6 ${
                     index == 1
                         ? 'bg-blue-200 font-bold opacity-70 hover:opacity-50'
                         : 'hover:bg-blue-200 hover:opacity-70'
                 }`}
-                onClick={() => nav('/address')}
+                onClick={() => nav('/user/address')}
             >
                 <LocationOnIcon /> &nbsp;<div>{t('user.AllAddress')}</div>
             </div>
             <div
-                 className={`transition-transform duration-500 ease-linear transform hover:translate-x-4 rounded p-4 cursor-pointer flex items-center mt-6 ${
+                className={`transition-transform duration-500 ease-linear transform hover:translate-x-4 rounded p-4 cursor-pointer flex items-center mt-6 ${
                     index == 2
                         ? 'bg-blue-200 font-bold opacity-70 hover:opacity-50'
                         : 'hover:bg-blue-200 hover:opacity-70'
@@ -56,7 +60,7 @@ const LeftNav: React.FC<LeftNavProps> = (props) => {
                 <NotificationsActiveIcon /> &nbsp;<div>{t('user.Notification')}</div>
             </div>
             <div
-                 className={`transition-transform duration-500 ease-linear transform hover:translate-x-4 rounded p-4 cursor-pointer flex items-center mt-6 ${
+                className={`transition-transform duration-500 ease-linear transform hover:translate-x-4 rounded p-4 cursor-pointer flex items-center mt-6 ${
                     index == 3
                         ? 'bg-blue-200 font-bold opacity-70 hover:opacity-50'
                         : 'hover:bg-blue-200 hover:opacity-70'
@@ -65,7 +69,7 @@ const LeftNav: React.FC<LeftNavProps> = (props) => {
                 <InventoryIcon /> &nbsp;<div>{t('user.Orders')}</div>
             </div>
             <div
-                 className={`transition-transform duration-500 ease-linear transform hover:translate-x-4 rounded p-4 cursor-pointer flex items-center mt-6 ${
+                className={`transition-transform duration-500 ease-linear transform hover:translate-x-4 rounded p-4 cursor-pointer flex items-center mt-6 ${
                     index == 4
                         ? 'bg-blue-200 font-bold opacity-70 hover:opacity-50'
                         : 'hover:bg-blue-200 hover:opacity-70'
@@ -75,7 +79,7 @@ const LeftNav: React.FC<LeftNavProps> = (props) => {
             </div>
             <div
                 onClick={handleClickShop}
-                 className={`transition-transform duration-500 ease-linear transform hover:translate-x-4 rounded p-4 cursor-pointer flex items-center mt-6 ${
+                className={`transition-transform duration-500 ease-linear transform hover:translate-x-4 rounded p-4 cursor-pointer flex items-center mt-6 ${
                     index == 5
                         ? 'bg-blue-200 font-bold opacity-70 hover:opacity-50'
                         : 'hover:bg-blue-200 hover:opacity-70'
