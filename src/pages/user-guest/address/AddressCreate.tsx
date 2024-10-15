@@ -10,9 +10,10 @@ import { GetGuestApi, PostApi } from '../../../untils/Api';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 import OutlinedInput from '@mui/material/OutlinedInput';
-import { add_item_address, change_is_loading } from '../../../reducers/Actions';
+import { add_item_address, change_is_loading, change_user } from '../../../reducers/Actions';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { filterInputNumber, toastSuccess, toastWarning } from '../../../untils/Logic';
+import Checkbox from '@mui/material/Checkbox';
 
 interface CityProps {
     province_id: string;
@@ -38,11 +39,12 @@ const AddressCreate: React.FC<AddressCreateProps> = (props) => {
     const isLoading = useSelector((state: ReducerProps) => state.isLoading);
     const { t } = useTranslation();
     const nav = useNavigate();
+    const user = useSelector((state: ReducerProps) => state.user);
     //
     const [phone, setPhone] = useState<string>('');
     const [name, setName] = useState<string>('');
     const [apartmentNumber, setApartmentNumber] = useState<string>('');
-
+    const [isDefault, setIsDefault] = useState<boolean>(false);
     const [city, setCity] = useState<any>(null);
     const [district, setDistrict] = useState<any>(null);
     const [ward, setWard] = useState<any>(null);
@@ -117,6 +119,16 @@ const AddressCreate: React.FC<AddressCreateProps> = (props) => {
                 setDistrict(null);
                 setWard(null);
                 store.dispatch(add_item_address(resSaveAddress.data.Address));
+                if (isDefault || user.defaultAddressId == '') {
+                    const resUpdateDefaultAddress = await PostApi(
+                        '/user/update-default-address',
+                        localStorage.getItem('token'),
+                        { addressId: resSaveAddress.data.Address.id },
+                    );
+                    if (resUpdateDefaultAddress.status == 200) {
+                        store.dispatch(change_user(resUpdateDefaultAddress.data.user));
+                    }
+                }
                 nav('/user/address');
             }
         } else {
@@ -140,11 +152,7 @@ const AddressCreate: React.FC<AddressCreateProps> = (props) => {
 
     return (
         <div>
-            <div className="fixed top-0 left-0 right-0 w-full z-50">
-                <div className="text-center bg-black text-white">{t('homepage.Free returns within 30 days')}</div>
-                <Header />
-            </div>
-
+            <Header />
             <div style={{ marginTop: 120 }} className="container z-10">
                 <div className="grid grid-cols-4  gap-4 container h-16">
                     <div className="hidden lg:block col-span-1 bg-white box-shadow">
@@ -240,6 +248,17 @@ const AddressCreate: React.FC<AddressCreateProps> = (props) => {
                                         placeholder={t('user.ApartmentNumber')}
                                     />
                                 </div>
+                            </div>
+                            <div className="flex items-center">
+                                <div>{t('user.DefaultAddress')}</div>
+                                <Checkbox
+                                    defaultChecked
+                                    value={isDefault}
+                                    checked={isDefault}
+                                    onChange={(e) => {
+                                        setIsDefault(e.target.checked);
+                                    }}
+                                />
                             </div>
                             <div className="mt-12 mr-12">
                                 <Button onClick={handleSaveAddress} className="flex items-center">

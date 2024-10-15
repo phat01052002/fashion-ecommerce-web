@@ -10,11 +10,13 @@ import { GetApi, GetGuestApi, PostApi } from '../../../untils/Api';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 import OutlinedInput from '@mui/material/OutlinedInput';
-import { add_item_address, change_is_loading, change_item_address } from '../../../reducers/Actions';
+import { add_item_address, change_is_loading, change_item_address, change_user } from '../../../reducers/Actions';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { filterInputNumber, toastSuccess, toastWarning } from '../../../untils/Logic';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { Alert } from '../../../components/alert/Alert';
+import Checkbox from '@mui/material/Checkbox';
+
 interface CityProps {
     province_id: string;
     province_name: string;
@@ -47,6 +49,7 @@ const AddressEdit: React.FC<AddressEditProps> = (props) => {
     const [phone, setPhone] = useState<string>('');
     const [name, setName] = useState<string>('');
     const [apartmentNumber, setApartmentNumber] = useState<string>('');
+    const [isDefault, setIsDefault] = useState<boolean>(false);
 
     const [city, setCity] = useState<any>(null);
     const [district, setDistrict] = useState<any>(null);
@@ -63,6 +66,7 @@ const AddressEdit: React.FC<AddressEditProps> = (props) => {
         setWard(address.ward);
         setApartmentNumber(address.apartment);
         setDistrict(address.district);
+        setIsDefault(address.isDefault || false);
     };
     const getDataAddress = async () => {
         const resAddress = await GetApi(`/user/address/get-id/${addressId}`, localStorage.getItem('token'));
@@ -134,6 +138,16 @@ const AddressEdit: React.FC<AddressEditProps> = (props) => {
                 toastSuccess(t('auth.Success'));
                 const indexToReplace = listAddress.findIndex((address: any) => address.id === addressId);
                 store.dispatch(change_item_address({ address: resSaveAddress.data.Address, index: indexToReplace }));
+                if (isDefault) {
+                    const resUpdateDefaultAddress = await PostApi(
+                        '/user/update-default-address',
+                        localStorage.getItem('token'),
+                        { addressId: resSaveAddress.data.Address.id },
+                    );
+                    if (resUpdateDefaultAddress.status == 200) {
+                        store.dispatch(change_user(resUpdateDefaultAddress.data.user));
+                    }
+                }
                 nav('/user/address');
             }
         } else {
@@ -168,11 +182,7 @@ const AddressEdit: React.FC<AddressEditProps> = (props) => {
 
     return (
         <div>
-            <div className="fixed top-0 left-0 right-0 w-full z-50">
-                <div className="text-center bg-black text-white">{t('homepage.Free returns within 30 days')}</div>
-                <Header />
-            </div>
-
+            <Header />
             <div style={{ marginTop: 120 }} className="container z-10">
                 <div className="grid grid-cols-4  gap-4 container h-16">
                     <div className="hidden lg:block col-span-1 bg-white box-shadow">
@@ -282,6 +292,17 @@ const AddressEdit: React.FC<AddressEditProps> = (props) => {
                                         placeholder={t('user.ApartmentNumber')}
                                     />
                                 </div>
+                            </div>
+                            <div className="flex items-center">
+                                <div>{t('user.DefaultAddress')}</div>
+                                <Checkbox
+                                    defaultChecked
+                                    value={isDefault}
+                                    checked={isDefault}
+                                    onChange={(e) => {
+                                        setIsDefault(e.target.checked);
+                                    }}
+                                />
                             </div>
                             <div className="mt-12 mr-12">
                                 <Button onClick={handleSaveAddress} className="flex items-center">

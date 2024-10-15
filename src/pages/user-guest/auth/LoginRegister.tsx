@@ -1,5 +1,12 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { checkIsEmail, filterInput, filterPassword, toastError, toastSuccess, toastWarning } from '../../../untils/Logic';
+import {
+    checkIsEmail,
+    filterInput,
+    filterPassword,
+    toastError,
+    toastSuccess,
+    toastWarning,
+} from '../../../untils/Logic';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { GetApi, PostGuestApi } from '../../../untils/Api';
@@ -91,6 +98,7 @@ function LoginRegister() {
                 const res_user = await GetApi('/user/get-user', res.data.accessToken);
                 store.dispatch(change_user(res_user.data.user));
                 store.dispatch(change_is_loading(false));
+                localStorage.setItem('oauth2', 'false');
 
                 nav('/');
             }
@@ -198,6 +206,9 @@ function LoginRegister() {
     const handleResendOtpRegister = async () => {
         try {
             const resResend = await PostGuestApi('/auth/require-otp', { email: localStorage.getItem('email') });
+            if (resResend.data.message == 'More require') {
+                toastWarning('More require');
+            }
         } catch (e) {}
     };
     const handleStart = () => {
@@ -279,6 +290,7 @@ function LoginRegister() {
                         store.dispatch(change_role(res_role.data.role));
                         const res_user = await GetApi('/user/get-user', loginGmail.data.accessToken);
                         store.dispatch(change_user(res_user.data.user));
+                        localStorage.setItem('oauth2', 'true');
                         nav('/');
                     }
                 }
@@ -332,7 +344,6 @@ function LoginRegister() {
                                 </span>
                             </span>
                             <div className="w-full h-5">
-                                {' '}
                                 {password ? <CheckPasswordMeter password={password} /> : null}
                             </div>
 

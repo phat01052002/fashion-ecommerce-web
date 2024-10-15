@@ -1,5 +1,5 @@
-import { Avatar, Divider, TextField } from '@mui/material';
-import React, { useState } from 'react';
+import { Avatar, Dialog, Divider, TextField } from '@mui/material';
+import React, { useRef, useState } from 'react';
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector, useStore } from 'react-redux';
@@ -20,15 +20,29 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import EditIcon from '@mui/icons-material/Edit';
 import SaveIcon from '@mui/icons-material/Save';
 import { AlertSaveInfo } from '../../components/alert/Alert';
-import { PostApi } from '../../untils/Api';
-import { filterInputNumber, filterSpecialInput, toastError, toastSuccess } from '../../untils/Logic';
-import { change_is_loading } from '../../reducers/Actions';
+import { GetApi, PostApi, PostGuestApi } from '../../untils/Api';
+import OtpInput from 'react-otp-input';
+
+import {
+    filterInput,
+    filterInputNumber,
+    filterPassword,
+    filterSpecialInput,
+    toastError,
+    toastSuccess,
+    toastWarning,
+} from '../../untils/Logic';
+import { change_is_loading, change_user } from '../../reducers/Actions';
 import LeftNav from '../../components/user-guest/info-user/LeftNav';
 import { HOST_BE } from '../../common/Common';
 import axios from 'axios';
 import { styled } from '@mui/material/styles';
 import { Button as Btn } from '@mui/material';
 import CancelPresentationIcon from '@mui/icons-material/CancelPresentation';
+import CheckPasswordMeter from '../../components/user-guest/CheckPasswordMeter';
+import VisibilityIcon from '@mui/icons-material/Visibility';
+import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
 interface InfoUserProps {}
 
@@ -44,6 +58,21 @@ const InfoUser: React.FC<InfoUserProps> = (props) => {
     const [rank, setRank] = useState<string>('');
     const [point, setPoint] = useState<number | undefined>(undefined);
     const [addressIdList, setAddressIdList] = useState([]);
+    //
+    const [passwordOld, setPasswordOld] = useState<string>('');
+    const [passwordNew, setPasswordNew] = useState<string>('');
+    const [rePasswordNew, setRePasswordNew] = useState<string>('');
+    const [strength, setStrength] = useState(0);
+    const [isHidePassword, setIsHidePassword] = useState<boolean>(true);
+    //time
+    const [time, setTime] = useState(300);
+    const [isRunning, setIsRunning] = useState(false);
+    const intervalRef = useRef<any>(null);
+    //
+    const [comfirm, setComfirm] = useState<any>([]);
+    const [otp, setOtp] = useState<string>('');
+    //
+    const [openOtp, setOpenOtp] = useState<boolean>(false);
     //
     const [selectImage, setSelectImage] = useState<File | null>(null);
 
@@ -80,6 +109,9 @@ const InfoUser: React.FC<InfoUserProps> = (props) => {
         setSex(user ? 'male' : 'female');
         setImage(user.image);
     };
+    const changeIsHidePassword = () => {
+        setIsHidePassword((prev) => !prev);
+    };
     const toggleShowChangePassword = () => {
         setIsShowChangePassword((prev) => !prev);
     };
@@ -89,7 +121,24 @@ const InfoUser: React.FC<InfoUserProps> = (props) => {
     const toggleIsShowPhone = () => {
         setIsShowChangePhone((prev) => !prev);
     };
+    const openDialog = () => {
+        setOpenOtp(true);
+    };
 
+    const handleCloseDialog = () => {
+        setOpenOtp(false);
+    };
+    const handleOtpChange = (otpValue: string) => {
+        const otpNumber = parseInt(otpValue, 10);
+        setOtp(otpValue);
+    };
+    const handlePaste: React.ClipboardEventHandler = (event) => {
+        const data = event.clipboardData.getData('text');
+        if (!isNaN(parseInt(data, 10))) {
+            setOtp(data);
+        }
+    };
+    //
     const toggleSex = () => {
         if (!isNotEdit) {
             setSex((prev) => {
@@ -99,6 +148,19 @@ const InfoUser: React.FC<InfoUserProps> = (props) => {
                     return 'male';
                 }
             });
+        }
+    };
+    const handleChangePassword = async () => {
+        const resChangePassword = await PostApi('/user/change-password', localStorage.getItem('token'), {
+            passwordOld: passwordOld,
+            email: user.email,
+        });
+        if (resChangePassword.data.message == 'Email sent successfully') {
+            openDialog();
+            setIsRunning(true);
+        }
+        if (resChangePassword.data.message == 'Incorrect password') {
+            toastWarning(t('auth.IncorrectPassword'));
         }
     };
     const handleClickAddress = () => {};
@@ -138,6 +200,7 @@ const InfoUser: React.FC<InfoUserProps> = (props) => {
             await PostApi('/user/update-user-info', localStorage.getItem('token'), {
                 phone: phone,
             });
+            setIsShowChangePhone(false);
             store.dispatch(change_is_loading(false));
         });
     };
@@ -152,6 +215,65 @@ const InfoUser: React.FC<InfoUserProps> = (props) => {
             store.dispatch(change_is_loading(false));
         });
     };
+    const handleVerifyOTP = async (otp: string, comfirm: any) => {
+        try {
+            const res = await PostGuestApi('/user/change-password-2fa', {
+                code: otp,
+                passwordNew: passwordNew,
+            });
+            if (res.data.message == 'Code expiry') {
+                return toastWarning('OTP hết hạn');
+            }
+            if (res.data.message == 'Success') {
+                store.dispatch(change_user(res.data.user));
+                toastSuccess(t('auth.Success'));
+                handleCloseDialog();
+                setIsShowChangePassword(false);
+                setIsHidePassword(true);
+                setPasswordNew('');
+                setPasswordOld('');
+                setRePasswordNew('');
+            }
+        } catch {}
+    };
+    //time otp
+    const handleResendOtp = async () => {
+        try {
+            const resResend = await PostGuestApi('/auth/require-otp', { email: user.email });
+            if (resResend.data.message == 'More require') {
+                toastWarning('More require');
+            }
+        } catch (e) {}
+    };
+    const handleStart = () => {
+        intervalRef.current = setInterval(() => {
+            setTime((prevTime) => {
+                if (prevTime == 1) {
+                    setIsRunning(false);
+                }
+                return prevTime - 1;
+            });
+        }, 1000);
+    };
+    const handleReset = () => {
+        setTime(300);
+        setIsRunning(true);
+        if (intervalRef.current) {
+            clearInterval(intervalRef.current);
+            intervalRef.current = null;
+        }
+        handleResendOtp();
+    };
+    useEffect(() => {
+        if (isRunning) {
+            handleStart();
+        }
+        return () => {
+            if (intervalRef.current) {
+                clearInterval(intervalRef.current);
+            }
+        };
+    }, [isRunning]);
     useEffect(() => {
         console.log(user);
         getData();
@@ -159,10 +281,7 @@ const InfoUser: React.FC<InfoUserProps> = (props) => {
 
     return (
         <div>
-            <div className="fixed top-0 left-0 right-0 w-full z-50">
-                <div className="text-center bg-black text-white">{t('homepage.Free returns within 30 days')}</div>
-                <Header />
-            </div>
+            <Header />
 
             <div style={{ marginTop: 120 }} className="container z-10">
                 <div className="grid grid-cols-4  gap-4 container h-16">
@@ -266,8 +385,17 @@ const InfoUser: React.FC<InfoUserProps> = (props) => {
                                                 </svg>
                                                 <VisuallyHiddenInput
                                                     type="file"
-                                                    onChange={(e) => {
-                                                        if (e.target.files) setSelectImage(e.target.files[0]);
+                                                    accept=".png, .jpg, .jpeg"
+                                                    onChange={(e: any) => {
+                                                        const file = e.target.files[0];
+                                                        if (
+                                                            file &&
+                                                            (file.type === 'image/png' || file.type === 'image/jpeg')
+                                                        ) {
+                                                            setSelectImage(file);
+                                                        } else {
+                                                            toastWarning('');
+                                                        }
                                                     }}
                                                 />
                                             </Btn>
@@ -394,48 +522,147 @@ const InfoUser: React.FC<InfoUserProps> = (props) => {
                             <div className="m-6 ml-12 mr-12">
                                 <Divider />
                             </div>
-                            <div className="grid grid-cols-3 flex justify-center items-center">
-                                {!isShowChangePassword ? (
-                                    <>
-                                        <div className="col-span-2 sm:col-span-1">
-                                            <div className="flex items-center">
-                                                <SecurityIcon /> &nbsp; &nbsp;
-                                                <div className="text-xl">{t('user.Secure')}</div>
+                            {localStorage.getItem('oauth2') == 'false' ? (
+                                <div className="grid grid-cols-3 flex justify-center items-center">
+                                    {!isShowChangePassword ? (
+                                        <>
+                                            <div className="col-span-2 sm:col-span-1">
+                                                <div className="flex items-center">
+                                                    <SecurityIcon /> &nbsp; &nbsp;
+                                                    <div className="text-xl">{t('user.Secure')}</div>
+                                                </div>
+                                                <div className="mt-3">{t('auth.Password')} &nbsp; ***********</div>
                                             </div>
-                                            <div className="mt-3">{t('auth.Password')} &nbsp; ***********</div>
-                                        </div>
-                                        <div>
-                                            <Button onClick={toggleShowChangePassword}>{t('auth.Change')}</Button>
-                                        </div>
-                                    </>
-                                ) : (
-                                    <>
-                                        <div>
-                                            <div className="flex items-center">
-                                                <SecurityIcon /> &nbsp; &nbsp;
-                                                <div className="text-xl">{t('user.Secure')}</div>
-                                            </div>
-                                            <div className="mt-3">{t('auth.Password')}</div>
                                             <div>
-                                                <Input placeholder="old" />
-                                                <Input placeholder="new" />
-                                                <Input placeholder="re-new" />
+                                                <Button onClick={toggleShowChangePassword}>{t('auth.Change')}</Button>
                                             </div>
-                                        </div>
+                                        </>
+                                    ) : (
+                                        <>
+                                            <div>
+                                                <div className="flex items-center">
+                                                    <SecurityIcon /> &nbsp; &nbsp;
+                                                    <div className="text-xl">{t('user.Secure')}</div>
+                                                </div>
+                                                <div className="mt-3">{t('auth.Password')}</div>
+                                                <div>
+                                                    <span className="w-full relative">
+                                                        <Input
+                                                            type={isHidePassword ? 'password' : 'text'}
+                                                            placeholder={t('auth.Password')}
+                                                            value={passwordOld}
+                                                            onChange={(e) => setPasswordOld(e.target.value)}
+                                                        />
+                                                        <span
+                                                            className="absolute top-0 right-2"
+                                                            onClick={changeIsHidePassword}
+                                                        >
+                                                            {isHidePassword ? (
+                                                                <VisibilityIcon />
+                                                            ) : (
+                                                                <VisibilityOffIcon />
+                                                            )}
+                                                        </span>
+                                                    </span>
+                                                    <span className="w-full relative">
+                                                        <Input
+                                                            type={isHidePassword ? 'password' : 'text'}
+                                                            placeholder={t('auth.Password')}
+                                                            value={passwordNew}
+                                                            onChange={(e) => {
+                                                                filterPassword(
+                                                                    e.target.value,
+                                                                    setPasswordNew,
+                                                                    setStrength,
+                                                                );
+                                                            }}
+                                                        />
+                                                        <span
+                                                            className="absolute top-0 right-2"
+                                                            onClick={changeIsHidePassword}
+                                                        >
+                                                            {isHidePassword ? (
+                                                                <VisibilityIcon />
+                                                            ) : (
+                                                                <VisibilityOffIcon />
+                                                            )}
+                                                        </span>
+                                                    </span>
+                                                    <div className="w-full h-5">
+                                                        {passwordNew ? (
+                                                            <CheckPasswordMeter password={passwordNew} />
+                                                        ) : null}
+                                                    </div>
 
-                                        <div className="ml-10">
-                                            <Button>{t('auth.Change')}</Button>
-                                            <Button className="mt-3" onClick={toggleShowChangePassword}>
-                                                {t('auth.Back')}
-                                            </Button>
-                                        </div>
-                                    </>
-                                )}
-                            </div>
+                                                    <span className="w-full relative">
+                                                        <Input
+                                                            type={isHidePassword ? 'password' : 'text'}
+                                                            placeholder={t('auth.Re-password')}
+                                                            value={rePasswordNew}
+                                                            onChange={(e) =>
+                                                                filterInput(e.target.value, setRePasswordNew)
+                                                            }
+                                                        />
+                                                        <span
+                                                            className="absolute top-0 right-2"
+                                                            onClick={changeIsHidePassword}
+                                                        >
+                                                            {isHidePassword ? (
+                                                                <VisibilityIcon />
+                                                            ) : (
+                                                                <VisibilityOffIcon />
+                                                            )}
+                                                        </span>
+                                                    </span>
+                                                </div>
+                                            </div>
+
+                                            <div className="ml-10">
+                                                <Button onClick={handleChangePassword}>{t('auth.Change')}</Button>
+                                                <Button className="mt-3" onClick={toggleShowChangePassword}>
+                                                    {t('auth.Back')}
+                                                </Button>
+                                            </div>
+                                        </>
+                                    )}
+                                </div>
+                            ) : null}
                         </div>
                     </div>
                 </div>
             </div>
+            <Dialog onClose={() => {}} open={openOtp}>
+                <Button className="mt-2 ml-2 w-2 mb-10 flex items-center justify-center" onClick={handleCloseDialog}>
+                    <ArrowBackIcon />
+                </Button>
+                <h1 className="text-center text-2xl font-bold">OTP</h1>
+                <OtpInput
+                    containerStyle={{ padding: 20 }}
+                    inputStyle={{
+                        backgroundColor: '#CAF5FF',
+                        borderRadius: 4,
+                        width: 50,
+                        height: 50,
+                        marginBottom: 10,
+                        color: 'black',
+                        outline: 'none',
+                        margin: 5,
+                    }}
+                    value={otp}
+                    onChange={handleOtpChange}
+                    onPaste={handlePaste}
+                    numInputs={6}
+                    renderInput={(props) => <input {...props} />}
+                />
+                <Button className="mt-10 ml-12 mr-12 mb-10" onClick={() => handleVerifyOTP(otp, comfirm)}>
+                    {t('Submit')}
+                </Button>
+                <div className="text-[16px] font-[700] flex justify-center items-center mt-12 mb-3">
+                    <Button disabled={time > 0 ? true : false} onClick={handleReset}>
+                        {time > 0 ? `${time} s` : 'Reset'}
+                    </Button>
+                </div>
+            </Dialog>
         </div>
     );
 };

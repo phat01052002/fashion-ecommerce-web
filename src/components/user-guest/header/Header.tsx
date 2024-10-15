@@ -17,6 +17,7 @@ import { filterSpecialInput } from '../../../untils/Logic';
 import HighlightOffIcon from '@mui/icons-material/HighlightOff';
 import { typeRole } from '../../../common/Common';
 import MenuUser from './MenuUser';
+import DrawerCart from './DrawerCart';
 interface HeaderProps {}
 const Header: React.FC<HeaderProps> = (props) => {
     const nav = useNavigate();
@@ -26,6 +27,8 @@ const Header: React.FC<HeaderProps> = (props) => {
     const store = useStore();
     const [openMenu, setOpenMenu] = useState<boolean>(false);
     const [openSearch, setOpenSearch] = useState<boolean>(false);
+    const [openCart, setOpenCart] = useState<boolean>(false);
+
     const [search, setSearch] = useState<string>('');
     const role = useSelector((state: ReducerProps) => state.role);
     const user = useSelector((state: ReducerProps) => state.user);
@@ -42,6 +45,9 @@ const Header: React.FC<HeaderProps> = (props) => {
 
     const toggleDrawerSearch = (newOpen: boolean) => () => {
         setOpenSearch(newOpen);
+    };
+    const toggleDrawerCart = (newOpen: boolean) => () => {
+        setOpenCart(newOpen);
     };
 
     const setNumberCart = () => {
@@ -70,8 +76,15 @@ const Header: React.FC<HeaderProps> = (props) => {
     }, [search]);
     return (
         <div>
-            <div className="box-shadow bg-white z-50">
-                <div className="grid grid-cols-2 lg:grid-cols-6 gap-4 container h-16">
+            <div
+                className="box-shadow bg-white box-shadow fixed top-0 right-auto w-full"
+                style={{
+                    zIndex: 999,
+                    height: 88,
+                }}
+            >
+                <div className="text-center bg-black text-white">{t('homepage.Free returns within 30 days')}</div>
+                <div className="grid grid-cols-2 lg:grid-cols-6 container gap-4 h-16  bg-white">
                     <div className="flex items-center justify-start lg:ml-0 ml-6">
                         <div
                             className="lg:hidden flex items-center justify-center mr-6 cursor-pointer"
@@ -95,7 +108,7 @@ const Header: React.FC<HeaderProps> = (props) => {
                             style={{
                                 fontSize: '18px',
                             }}
-                            className="mr-3 ml-3 cursor-pointer font-bold "
+                            className="mr-3 ml-3 cursor-pointer font-normal text-3xl "
                         >
                             {t('homepage.Category')}
                         </span>
@@ -103,7 +116,7 @@ const Header: React.FC<HeaderProps> = (props) => {
                             style={{
                                 fontSize: '18px',
                             }}
-                            className="mr-3 ml-3 cursor-pointer font-bold "
+                            className="mr-3 ml-3 cursor-pointer font-normal text-3xl "
                         >
                             {t('homepage.New Product')}
                         </span>
@@ -111,7 +124,7 @@ const Header: React.FC<HeaderProps> = (props) => {
                             style={{
                                 fontSize: '18px',
                             }}
-                            className="mr-3 ml-3 cursor-pointer font-bold "
+                            className="mr-3 ml-3 cursor-pointer font-normal text-3xl "
                         >
                             {t('homepage.Men Fashion')}
                         </span>
@@ -119,7 +132,7 @@ const Header: React.FC<HeaderProps> = (props) => {
                             style={{
                                 fontSize: '18px',
                             }}
-                            className="mr-3 ml-3 cursor-pointer font-bold "
+                            className="mr-3 ml-3 cursor-pointer font-normal text-3xl "
                         >
                             {t('homepage.Women Fashion')}
                         </span>
@@ -131,7 +144,7 @@ const Header: React.FC<HeaderProps> = (props) => {
                         </span>
                         <span className="mr-3 ml-3 cursor-pointer scale">
                             <Badge badgeContent={numberCart} color="error">
-                                <LocalMallIcon color="primary" />
+                                <LocalMallIcon color="primary" onClick={toggleDrawerCart(true)} />
                             </Badge>
                         </span>
                         {role == typeRole.GUEST ? (
@@ -160,8 +173,9 @@ const Header: React.FC<HeaderProps> = (props) => {
 
                 <DrawerMenu open={openMenu} toggleDrawer={toggleDrawerMenu} />
                 <DrawerSearch open={openSearch} toggleDrawer={toggleDrawerSearch} />
+                <DrawerCart open={openCart} toggleDrawer={toggleDrawerCart} />
             </div>
-            <div className="mt-6 mb-6 ml-12 mr-12 relative lg:hidden block">
+            <div className="mt-6 mb-6 ml-12 mr-12 relative lg:hidden block bg-white">
                 <span className="absolute top-1 left-2">
                     <SearchIcon />
                 </span>

@@ -25,7 +25,7 @@ const myReducer = (state = initialState, action: any) => {
         case 'SET_NUMBER_CART':
             return {
                 ...state,
-                numberCart: action.payload,
+                numberCart: state.numberCart + action.payload,
             };
         case 'CHANGE_ROLE':
             return {

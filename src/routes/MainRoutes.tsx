@@ -14,18 +14,27 @@ import AddressCreate from '../pages/user-guest/address/AddressCreate';
 import AddressEdit from '../pages/user-guest/address/AddressEdit';
 import RegisterShop from '../pages/shop/RegisterShop';
 import ShopHome from '../pages/shop/ShopHome';
+import Product from '../pages/user-guest/Product';
+import Page404 from '../pages/default/page404';
 
 interface MainRoutersProps {}
 const MainRouters: React.FC<MainRoutersProps> = (props) => {
     const store = useStore();
     const role = useSelector((state: ReducerProps) => state.role);
 
+    const defaultPage = (
+        <>
+            <Route path="/" element={<HomePage />}></Route>
+            <Route path="/err404" element={<Page404 />}></Route>
+            <Route path="/product/:productId" element={<Product />}></Route>
+        </>
+    );
     //return router suitable for role
     if (role === typeRole.GUEST) {
         return (
             <BrowserRouter>
                 <Routes>
-                    <Route path="/" element={<HomePage />}></Route>
+                    {defaultPage}
                     <Route path="/login" element={<Login />}></Route>
                     <Route path="/login-register" element={<LoginRegister />}></Route>
                     <Route path="/forget-password" element={<ForgetPassword />}></Route>
@@ -36,11 +45,13 @@ const MainRouters: React.FC<MainRoutersProps> = (props) => {
         return (
             <BrowserRouter>
                 <Routes>
-                    <Route path="/" element={<HomePage />}></Route>
+                    {defaultPage}
+
                     <Route path="/user/info-user" element={<InfoUser />}></Route>
                     <Route path="/user/address" element={<AllAddress />}></Route>
                     <Route path="/user/address/create" element={<AddressCreate />}></Route>
                     <Route path="/user/address/edit/:addressId" element={<AddressEdit />}></Route>
+                    <Route path="/user/register-shop" element={<RegisterShop />}></Route>
                 </Routes>
             </BrowserRouter>
         );
@@ -48,12 +59,12 @@ const MainRouters: React.FC<MainRoutersProps> = (props) => {
         return (
             <BrowserRouter>
                 <Routes>
-                    <Route path="/" element={<HomePage />}></Route>
+                    {defaultPage}
+
                     <Route path="/user/info-user" element={<InfoUser />}></Route>
                     <Route path="/user/address" element={<AllAddress />}></Route>
                     <Route path="/user/address/create" element={<AddressCreate />}></Route>
                     <Route path="/user/address/edit/:addressId" element={<AddressEdit />}></Route>
-                    <Route path="/user/register-shop" element={<RegisterShop />}></Route>
                     <Route path="/shop/:shopId" element={<ShopHome />}></Route>
                 </Routes>
             </BrowserRouter>

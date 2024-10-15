@@ -52,11 +52,7 @@ const RegisterShop: React.FC<RegisterShopProps> = (props) => {
     };
     return (
         <div>
-            <div className="fixed top-0 left-0 right-0 w-full z-50">
-                <div className="text-center bg-black text-white">{t('homepage.Free returns within 30 days')}</div>
-                <Header />
-            </div>
-
+            <Header />
             <div style={{ marginTop: 120 }} className="flex justify-center">
                 {user.role == typeRole.USER ? (
                     <div
@@ -130,7 +126,7 @@ const RegisterShop: React.FC<RegisterShopProps> = (props) => {
                         </div>
                     </div>
                 ) : (
-                    <Button onClick={()=>nav(`/shop/${user.shopId}`)}>
+                    <Button onClick={() => nav(`/shop/${user.shopId}`)}>
                         Shop &nbsp; <ArrowForwardIcon />
                     </Button>
                 )}

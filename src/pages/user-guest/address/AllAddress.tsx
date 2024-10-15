@@ -33,11 +33,7 @@ const AllAddress: React.FC<AllAddressProps> = (props) => {
     }, []);
     return (
         <div>
-            <div className="fixed top-0 left-0 right-0 w-full z-50">
-                <div className="text-center bg-black text-white">{t('homepage.Free returns within 30 days')}</div>
-                <Header />
-            </div>
-
+            <Header />
             <div style={{ marginTop: 120 }} className="container z-10">
                 <div className="grid grid-cols-4  gap-4 container h-16">
                     <div className="hidden lg:block col-span-1 bg-white box-shadow">
@@ -73,12 +69,7 @@ const AllAddress: React.FC<AllAddressProps> = (props) => {
                                                           }}
                                                           transition={{ duration: 0.2 }}
                                                       >
-                                                          <AddressItem
-                                                              key={index}
-                                                              address={address}
-                                                              isFirst={true}
-                                                              index={index}
-                                                          />
+                                                          <AddressItem key={index} address={address} index={index} />
                                                       </motion.li>
                                                   );
                                               } else {
@@ -94,12 +85,7 @@ const AllAddress: React.FC<AllAddressProps> = (props) => {
                                                           }}
                                                           transition={{ duration: 0.2 }}
                                                       >
-                                                          <AddressItem
-                                                              key={index}
-                                                              address={address}
-                                                              isFirst={false}
-                                                              index={index}
-                                                          />
+                                                          <AddressItem key={index} address={address} index={index} />
                                                       </motion.li>
                                                   );
                                               }

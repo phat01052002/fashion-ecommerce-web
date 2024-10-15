@@ -25,6 +25,9 @@ api.interceptors.response.use(
         if (response && response.status === 502) {
             // Thay đổi mã trạng thái thành 200 và trả về thông báo
             toastError('Fail');
+            // localStorage.removeItem('token');
+            // localStorage.removeItem('refreshToken');
+            // localStorage.removeItem('oauth2');
 
             return Promise.resolve({
                 status: 204,
@@ -32,7 +35,7 @@ api.interceptors.response.use(
             });
         }
         if (response && response.status === 404) {
-            toastError('Fail');
+            window.location.href = '/err404';
 
             return Promise.resolve({
                 status: 200,

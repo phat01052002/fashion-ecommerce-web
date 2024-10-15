@@ -34,11 +34,10 @@ const MenuUser: React.FC<MenuUserProps> = (props) => {
         const logOut = async () => {
             const resLogout = await PostApi('/user/logout', localStorage.getItem('token'), {});
             if (resLogout.data.message == 'Success') {
-                localStorage.removeItem('token');
-                localStorage.removeItem('refreshToken');
+                localStorage.clear();
                 store.dispatch(change_user({}));
                 store.dispatch(change_role(typeRole.GUEST));
-                nav('/login-register');
+                window.location.href = '/login-register';
             } else {
             }
         };

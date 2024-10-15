@@ -9,17 +9,16 @@ import { ReducerProps } from '../../../reducers/ReducersProps';
 import { useNavigate } from 'react-router-dom';
 interface AddressItemProps {
     address: any;
-    isFirst: boolean;
     index: number;
 }
 
 const AddressItem: React.FC<AddressItemProps> = (props) => {
-    const { address, isFirst, index } = props;
+    const { address, index } = props;
     const { t } = useTranslation();
     const store = useStore();
     const nav = useNavigate();
     const listAddress = useSelector((state: ReducerProps) => state.listAddress);
-
+    const user = useSelector((state: ReducerProps) => state.user);
     const handleDelete = () => {
         //logic be
 
@@ -37,11 +36,13 @@ const AddressItem: React.FC<AddressItemProps> = (props) => {
             >
                 <div className="text-xl flex items-center">
                     <h1> {address.name.toUpperCase()}</h1>
-                    {isFirst ? (
-                        <h1 className=" ml-6 flex items-center text-sm">
-                            <CheckCircleOutlineIcon sx={{ height: 16, width: 16, color: 'green' }} /> &nbsp;
-                            <h1 className="text-green-700">{t('user.Default')}</h1>
-                        </h1>
+                    {user.defaultAddressId != '' ? (
+                        user.defaultAddressId == address.id ? (
+                            <h1 className=" ml-6 flex items-center text-sm">
+                                <CheckCircleOutlineIcon sx={{ height: 16, width: 16, color: 'green' }} /> &nbsp;
+                                <h1 className="text-green-700">{t('user.Default')}</h1>
+                            </h1>
+                        ) : null
                     ) : null}
                 </div>
                 <div className="mt-3">

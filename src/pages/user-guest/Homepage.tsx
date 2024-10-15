@@ -6,11 +6,6 @@ import { incrementNumberCart } from '../../reducers/Actions';
 interface HomePageProps {}
 const HomePage: React.FC<HomePageProps> = (props) => {
     const { t } = useTranslation();
-    return (
-        <div className="fixed top-0 w-full">
-            <div className="text-center bg-black text-white">{t('homepage.Free returns within 30 days')}</div>
-            <Header />
-        </div>
-    );
+    return <Header />;
 };
 export default HomePage;
