@@ -132,3 +132,14 @@ export const totalQuantityInCart = () => {
         return 0;
     }
 };
+
+export const findProductDetailInStore = (id: string) => {
+    const existingCart = JSON.parse(localStorage.getItem('listCart') || '[]');
+    return existingCart.find((item: any, index: number) => item.productDetailId == id);
+};
+
+export const removeItemFromCart = (id: string) => {
+    const existingCart = JSON.parse(localStorage.getItem('listCart') || '[]');
+    const updatedCart = existingCart.filter((item: any) => item.productDetailId !== id);
+    localStorage.setItem('listCart', JSON.stringify(updatedCart));
+};

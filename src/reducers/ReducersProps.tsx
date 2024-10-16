@@ -4,4 +4,5 @@ export interface ReducerProps {
     user: any;
     isLoading: boolean;
     listAddress: any;
+    listItemInCart: any;
 }

@@ -2,11 +2,11 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { GetGuestApi } from '../../untils/Api';
 import { useStore } from 'react-redux';
-import { change_is_loading, set_number_cart } from '../../reducers/Actions';
+import { add_list_item_in_cart, change_is_loading, set_number_cart } from '../../reducers/Actions';
 import Header from '../../components/user-guest/header/Header';
 import { useTranslation } from 'react-i18next';
 import { Divider } from '@mui/material';
-import { addToListCartStore, filterInputNumber, formatPrice, shortedString } from '../../untils/Logic';
+import { addToListCartStore, filterInputNumber, formatPrice, shortedString, toastSuccess } from '../../untils/Logic';
 import SelectedProductDetailImage from '../../components/user-guest/SelectedProduct';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import { Button } from '../../components/ComponentsLogin';
@@ -27,6 +27,13 @@ const Product: React.FC<ProductProps> = (props) => {
     const [listOption2, setListOption2] = useState<any>([]);
     const [quantity, setQuantity] = useState<number>(1);
     //
+    const [material, setMaterial] = useState<string>('123');
+    const [styles, setStyles] = useState<string>('123');
+    const [brand, setBrand] = useState<string>('123');
+    const [origin, setOrigin] = useState<string>('123');
+    const [isExpandedDescribe, setIsExpandedDescribe] = useState(false);
+
+    //
     const [isOpenDialogTips, setIsOpenDialogTips] = useState<boolean>(false);
 
     //
@@ -34,9 +41,15 @@ const Product: React.FC<ProductProps> = (props) => {
     const { t } = useTranslation();
     const nav = useNavigate();
     //
+    const toggleExpand = () => {
+        setIsExpandedDescribe((prev: any) => !prev);
+    };
+    //
     const handleAddToCart = () => {
         addToListCartStore(selectedProductDetail.id, quantity, selectedProductDetail);
         store.dispatch(set_number_cart(quantity));
+        store.dispatch(add_list_item_in_cart(selectedProductDetail));
+        toastSuccess(t('auth.Success'));
     };
     const handleDecreaseQuantity = () => {
         if (quantity > 1) setQuantity((prev: any) => parseInt(prev) - 1);
@@ -50,10 +63,45 @@ const Product: React.FC<ProductProps> = (props) => {
         const resProduct = await GetGuestApi(`/api/product/${productId}`);
         if (resProduct.status == 200) {
             setProducts(resProduct.data.product);
+            //category
             const resCategory = await GetGuestApi(`/api/category/${resProduct.data.product.categoryId}`);
             if (resCategory.status == 200) {
                 setCategory(resCategory.data.category);
             }
+            // //Info more
+            // if (resProduct.data.product.stylesId) {
+            //     const resStyles = await GetGuestApi(`/api/styles/${resProduct.data.product.stylesId}`);
+            //     if (resStyles.data.message == 'Success') {
+            //         setStyles(resStyles.data.styles.name);
+            //     }
+            // } else {
+            //     setStyles(resProduct.data.product.stylesOrther);
+            // }
+            // if (resProduct.data.product.originId) {
+            //     const resOrigin = await GetGuestApi(`/api/origin/${resProduct.data.product.originId}`);
+            //     if (resOrigin.data.message == 'Success') {
+            //         setOrigin(resOrigin.data.origin.name);
+            //     }
+            // } else {
+            //     setOrigin(resProduct.data.product.originOrther);
+            // }
+            // if (resProduct.data.product.materialId) {
+            //     const resMaterial = await GetGuestApi(`/api/material/${resProduct.data.product.materialId}`);
+            //     if (resMaterial.data.message == 'Success') {
+            //         setMaterial(resMaterial.data.material.name);
+            //     }
+            // } else {
+            //     setMaterial(resProduct.data.product.materialOrther);
+            // }
+            // if (resProduct.data.product.brandId) {
+            //     const resBrand = await GetGuestApi(`/api/brand/${resProduct.data.product.brandId}`);
+            //     if (resBrand.data.message == 'Success') {
+            //         setBrand(resBrand.data.brand.name);
+            //     }
+            // } else {
+            //     setBrand(resProduct.data.product.brandOrther);
+            // }
+            // //
         }
         const resProductDetail = await GetGuestApi(`/api/product-detail-by-product/${productId}`);
         if (resProductDetail.status == 200) {
@@ -173,11 +221,12 @@ const Product: React.FC<ProductProps> = (props) => {
                                 <div className="mt-3">
                                     <div className="font-thin text-xl font-bold">{t('product.Size')}</div>
 
-                                    <div className="flex select-none">
+                                    <div className="flex select-none grid grid-cols-4 lg:grid-cols-6">
                                         {products.options.size.map((size: any, index: number) => (
                                             <div
                                                 style={{
-                                                    width: 50,
+                                                    minWidth: 50,
+                                                    maxWidth: 60,
                                                     height: 50,
                                                 }}
                                                 className={`relative m-3 p-3  border-gray-300 rounded cursor-pointer flex items-center justify-center ${
@@ -223,7 +272,7 @@ const Product: React.FC<ProductProps> = (props) => {
                                 <div className="mt-3">
                                     <div className="font-thin text-xl font-bold">{t('product.Color')}</div>
 
-                                    <div className="grid grid-cols-3 select-none">
+                                    <div className="grid grid-cols-2 xl:grid-cols-3  select-none">
                                         {products.options.color.map((color: any, index: number) => (
                                             <div
                                                 className={`relative m-3 p-3  border-gray-300 rounded cursor-pointer  flex items-center justify-center ${
@@ -328,6 +377,89 @@ const Product: React.FC<ProductProps> = (props) => {
                         </div>
                     ) : null}
                 </div>
+                {products ? (
+                    <>
+                        <div className="mt-6 border-b border-gray-300 flex">
+                            <div
+                                style={{
+                                    borderBottomWidth: 3,
+                                }}
+                                className="font-bold text-2xl border-b border-solid  border-red-500"
+                            >
+                                {t('product.Info')}
+                            </div>
+                        </div>
+
+                        <div style={{ width: '70%' }} className="p-3">
+                            <div className="mt-3 grid grid-cols-2">
+                                <div
+                                    style={{ height: 50 }}
+                                    className="border broder-gray-300 p-3 text-center font-bold"
+                                >
+                                    {t('product.Material')}
+                                </div>
+                                <div className="border broder-gray-300 p-3 text-center">{material}</div>
+                            </div>
+                            <div className="grid grid-cols-2">
+                                <div
+                                    style={{ height: 50 }}
+                                    className="border broder-gray-300 p-3 text-center font-bold"
+                                >
+                                    {t('product.Styles')}
+                                </div>
+                                <div className="border broder-gray-300 p-3 text-center">{styles}</div>
+                            </div>
+                            <div className="grid grid-cols-2">
+                                <div
+                                    style={{ height: 50 }}
+                                    className="border broder-gray-300 p-3 text-center font-bold"
+                                >
+                                    {t('product.Brand')}
+                                </div>
+                                <div className="border broder-gray-300 p-3 text-center">{brand}</div>
+                            </div>
+                            <div className="grid grid-cols-2">
+                                <div
+                                    style={{ height: 50 }}
+                                    className="border broder-gray-300 p-3 text-center font-bold"
+                                >
+                                    {t('product.Origin')}
+                                </div>
+                                <div className="border broder-gray-300 p-3 text-center">{origin}</div>
+                            </div>
+                        </div>
+                        <div className="mt-6 border-b border-gray-300 flex">
+                            <div
+                                style={{
+                                    borderBottomWidth: 3,
+                                }}
+                                className="font-bold text-2xl border-b border-solid  border-red-500"
+                            >
+                                {t('product.Describe')}
+                            </div>
+                        </div>
+                        <div className="mt-3">
+                            <div className={`description ${isExpandedDescribe ? 'expanded' : 'collapsed'}`}>
+                                <div
+                                    dangerouslySetInnerHTML={{
+                                        __html: isExpandedDescribe
+                                            ? products.describe
+                                            : products.describe.split('<p>').slice(0, 8).join('<p>'),
+                                    }}
+                                ></div>
+                                {!isExpandedDescribe && <div className="fade-out"></div>}
+                            </div>
+                            <div className="text-center mt-3">
+                                <button
+                                    className="cursor-pointer text-blue-400 font-bold text-sm"
+                                    onClick={toggleExpand}
+                                >
+                                    {isExpandedDescribe ? 'Thu gọn' : 'Xem thêm'}
+                                </button>
+                            </div>
+                        </div>
+                    </>
+                ) : null}
             </div>
             <DialogTips isOpen={isOpenDialogTips} setIsOpen={setIsOpenDialogTips} />
         </div>

@@ -4,6 +4,7 @@ const initialState = {
     user: {},
     listAddress: [],
     isLoading: false,
+    listItemInCart: [],
 };
 const myReducer = (state = initialState, action: any) => {
     switch (action.type) {
@@ -26,6 +27,11 @@ const myReducer = (state = initialState, action: any) => {
             return {
                 ...state,
                 numberCart: state.numberCart + action.payload,
+            };
+        case 'DECREASE_NUMBER_CART':
+            return {
+                ...state,
+                numberCart: state.numberCart - action.payload,
             };
         case 'CHANGE_ROLE':
             return {
@@ -64,6 +70,28 @@ const myReducer = (state = initialState, action: any) => {
                     i === action.payload.index ? action.payload.address : address,
                 ),
             };
+        case 'ADD_LIST_ITEM_IN_CART':
+            const productIndex = state.listItemInCart.findIndex(
+                (productDetail: any) => action.payload.id == productDetail.id,
+            );
+            console.log(productIndex);
+            if (productIndex == -1) {
+                return {
+                    ...state,
+                    listItemInCart: [...state.listItemInCart, action.payload],
+                };
+            } else {
+                return {
+                    ...state,
+                };
+            }
+        case 'REMOVE_ITEM_FROM_CART':
+            const newList = state.listItemInCart.filter((productDetail: any) => productDetail.id !== action.payload);
+            return {
+                ...state,
+                listItemInCart: newList,
+            };
+
         default:
             return state;
     }

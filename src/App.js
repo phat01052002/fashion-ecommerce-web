@@ -18,6 +18,7 @@ import { totalQuantityInCart } from './untils/Logic';
 function App() {
     const store = createStore(myReducer, applyMiddleware(thunk));
     initI18n(sessionStorage.getItem('lng') || typeLng.VN);
+
     //get role if have token
     const getRoleAndUser = async () => {
         try {
