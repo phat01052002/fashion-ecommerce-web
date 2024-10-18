@@ -5,7 +5,7 @@ import KeyboardBackspaceIcon from '@mui/icons-material/KeyboardBackspace';
 import { useTranslation } from 'react-i18next';
 import { Divider } from '@mui/material';
 import { TextField } from '@mui/material';
-import { filterSpecialInput } from '../../../untils/Logic';
+import { filterSpecialInput, formatPrice } from '../../../untils/Logic';
 import SearchIcon from '@mui/icons-material/Search';
 import HighlightOffIcon from '@mui/icons-material/HighlightOff';
 import { async } from '@firebase/util';
@@ -18,6 +18,7 @@ import { add_list_item_in_cart } from '../../../reducers/Actions';
 import CartItem from '../cart/CartItem';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
+import { Button } from '../../ComponentsLogin';
 interface DrawerCartProps {
     open: boolean;
     toggleDrawer: any;
@@ -28,6 +29,8 @@ const DrawerCart: React.FC<DrawerCartProps> = (props) => {
     const listItemInCart = useSelector((state: ReducerProps) => state.listItemInCart);
     const store = useStore();
     const nav = useNavigate();
+    const [totalPrice, setTotalPrice] = useState<number>(0);
+    const [totalItem, setTotalItem] = useState<number>(0);
     //get data in cart
     const getDataInCart = async () => {
         const listCart = JSON.parse(localStorage.getItem('listCart') || '[]');
@@ -42,7 +45,6 @@ const DrawerCart: React.FC<DrawerCartProps> = (props) => {
     useEffect(() => {
         if (localStorage.getItem('listCart')) getDataInCart();
     }, []);
-    console.log(listItemInCart);
     const DrawerList = (
         <Box sx={{ width: '100%', minWidth: 400 }} role="presentation">
             <div className="mt-3 ml-3 mb-3 flex justify-start items-center ">
@@ -76,9 +78,18 @@ const DrawerCart: React.FC<DrawerCartProps> = (props) => {
         </Box>
     );
     return (
-        <div>
-            <Drawer className="" anchor="right" open={open} onClose={toggleDrawer(false)}>
+        <div className="">
+            <Drawer className="relative" anchor="right" open={open} onClose={toggleDrawer(false)}>
                 <div style={{ maxWidth: 650 }}> {DrawerList}</div>
+                <div className="absolute z-10 bottom-0 left-0 right-auto box-shadow rounded w-full bg-gray-200">
+                    <div className="flex justify-end p-3 items-center">
+                        <div className="font-bold mr-6">
+                            {t('product.Total')}
+                            {`(${totalItem})`} : {formatPrice(totalPrice)}
+                        </div>
+                        <Button>{t('product.Buy')}</Button>
+                    </div>
+                </div>
             </Drawer>
         </div>
     );

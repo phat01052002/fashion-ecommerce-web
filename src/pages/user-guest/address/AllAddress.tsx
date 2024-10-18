@@ -11,6 +11,7 @@ import { GetApi } from '../../../untils/Api';
 import AddressItem from '../../../components/user-guest/address/AddressItem';
 import { change_list_address } from '../../../reducers/Actions';
 import { motion, AnimatePresence } from 'framer-motion';
+import Footer from '../../../components/user-guest/footer/Footer';
 
 interface AllAddressProps {}
 
@@ -35,7 +36,7 @@ const AllAddress: React.FC<AllAddressProps> = (props) => {
         <div>
             <Header />
             <div style={{ marginTop: 120 }} className="container z-10">
-                <div className="grid grid-cols-4  gap-4 container h-16">
+                <div className="grid grid-cols-4  gap-4 container">
                     <div className="hidden lg:block col-span-1 bg-white box-shadow">
                         <LeftNav index={1} />
                     </div>
@@ -97,6 +98,7 @@ const AllAddress: React.FC<AllAddressProps> = (props) => {
                     </div>
                 </div>
             </div>
+            <Footer />
         </div>
     );
 };

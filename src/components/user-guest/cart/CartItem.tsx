@@ -13,6 +13,7 @@ import {
     set_number_cart,
 } from '../../../reducers/Actions';
 import { ReducerProps } from '../../../reducers/ReducersProps';
+import { useTranslation } from 'react-i18next';
 interface CartItemProps {
     productDetail: any;
 }
@@ -23,6 +24,7 @@ const CartItem: React.FC<CartItemProps> = (props) => {
     const numberCart = useSelector((state: ReducerProps) => state.numberCart);
     const nav = useNavigate();
     const store = useStore();
+    const { t } = useTranslation();
     const handleDecreaseQuantity = () => {
         if (quantity > 1) {
             store.dispatch(decrementNumberCart());
@@ -134,7 +136,7 @@ const CartItem: React.FC<CartItemProps> = (props) => {
                 </div>
                 <div className="flex items-center pl-5">
                     <h1 className="font-bold text-sm">
-                        Total :{' '}
+                        {t('product.Total')} :{' '}
                         {formatPrice(
                             parseInt(productDetail.price) *
                                 parseInt(productDetailInStore ? productDetailInStore.quantity : 0),
@@ -142,7 +144,7 @@ const CartItem: React.FC<CartItemProps> = (props) => {
                     </h1>
                 </div>
                 <div className="flex items-center justify-end pr-5">
-                    <Button style={{ width: '70%' }}>Buy</Button>
+                    <Button style={{ width: '100%', textAlign: 'center' }}>{t('product.Buy')}</Button>
                 </div>
             </div>
         </div>

@@ -1,18 +1,32 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { GetGuestApi } from '../../untils/Api';
-import { useStore } from 'react-redux';
+import { useSelector, useStore } from 'react-redux';
 import { add_list_item_in_cart, change_is_loading, set_number_cart } from '../../reducers/Actions';
 import Header from '../../components/user-guest/header/Header';
 import { useTranslation } from 'react-i18next';
 import { Divider } from '@mui/material';
-import { addToListCartStore, filterInputNumber, formatPrice, shortedString, toastSuccess } from '../../untils/Logic';
+import {
+    addToListCartStore,
+    checkIsFavorite,
+    filterInputNumber,
+    formatPrice,
+    shortedString,
+    toastSuccess,
+} from '../../untils/Logic';
 import SelectedProductDetailImage from '../../components/user-guest/SelectedProduct';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import { Button } from '../../components/ComponentsLogin';
 import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
 import TipsAndUpdatesIcon from '@mui/icons-material/TipsAndUpdates';
 import DialogTips from '../../components/dialog/DialogTips';
+import ChatIcon from '@mui/icons-material/Chat';
+import PageviewIcon from '@mui/icons-material/Pageview';
+import Footer from '../../components/user-guest/footer/Footer';
+import MultiCaroselProduct from '../../components/user-guest/product/MultiCaroselProduct';
+import SkeletonProductItem from '../../components/user-guest/product/SkeletonProductItem';
+import Heart from '../../components/user-guest/product/Heart';
+import { ReducerProps } from '../../reducers/ReducersProps';
 interface ProductProps {}
 
 const Product: React.FC<ProductProps> = (props) => {
@@ -26,13 +40,15 @@ const Product: React.FC<ProductProps> = (props) => {
     const [listOption1, setListOption1] = useState<any>([]);
     const [listOption2, setListOption2] = useState<any>([]);
     const [quantity, setQuantity] = useState<number>(1);
+    const [productsSimilar, setProductsSimilar] = useState<any>(undefined);
+    const [isFavorite, setIsFavorite] = useState<boolean>(false);
     //
     const [material, setMaterial] = useState<string>('123');
     const [styles, setStyles] = useState<string>('123');
-    const [brand, setBrand] = useState<string>('123');
+    const [brand, setBrand] = useState<string>('');
     const [origin, setOrigin] = useState<string>('123');
     const [isExpandedDescribe, setIsExpandedDescribe] = useState(false);
-
+    const [shop, setShop] = useState<any>(undefined);
     //
     const [isOpenDialogTips, setIsOpenDialogTips] = useState<boolean>(false);
 
@@ -40,6 +56,8 @@ const Product: React.FC<ProductProps> = (props) => {
     const store = useStore();
     const { t } = useTranslation();
     const nav = useNavigate();
+    const user = useSelector((state: ReducerProps) => state.user);
+
     //
     const toggleExpand = () => {
         setIsExpandedDescribe((prev: any) => !prev);
@@ -68,7 +86,7 @@ const Product: React.FC<ProductProps> = (props) => {
             if (resCategory.status == 200) {
                 setCategory(resCategory.data.category);
             }
-            // //Info more
+            //Info more
             // if (resProduct.data.product.stylesId) {
             //     const resStyles = await GetGuestApi(`/api/styles/${resProduct.data.product.stylesId}`);
             //     if (resStyles.data.message == 'Success') {
@@ -93,15 +111,22 @@ const Product: React.FC<ProductProps> = (props) => {
             // } else {
             //     setMaterial(resProduct.data.product.materialOrther);
             // }
-            // if (resProduct.data.product.brandId) {
-            //     const resBrand = await GetGuestApi(`/api/brand/${resProduct.data.product.brandId}`);
-            //     if (resBrand.data.message == 'Success') {
-            //         setBrand(resBrand.data.brand.name);
-            //     }
-            // } else {
-            //     setBrand(resProduct.data.product.brandOrther);
-            // }
-            // //
+            if (resProduct.data.product.brandId) {
+                const resBrand = await GetGuestApi(`/api/brand/${resProduct.data.product.brandId}`);
+                if (resBrand.data.message == 'Success') {
+                    setBrand(resBrand.data.brand.name);
+                }
+            } else {
+                setBrand(resProduct.data.product.brandOrther);
+            }
+            //
+            if (resProduct.data.product.shopId) {
+                const resShop = await GetGuestApi(`/api/shop/${resProduct.data.product.shopId}`);
+                if (resShop.data.message == 'Success') {
+                    setShop(resShop.data.shop);
+                }
+            }
+            //
         }
         const resProductDetail = await GetGuestApi(`/api/product-detail-by-product/${productId}`);
         if (resProductDetail.status == 200) {
@@ -127,6 +152,13 @@ const Product: React.FC<ProductProps> = (props) => {
         }
 
         store.dispatch(change_is_loading(false));
+        if (resProduct.status == 200) {
+            const limit = 10;
+            const resProductsSimilar = await GetGuestApi(`/api/product-similar/${resProduct.data.product.id}/${limit}`);
+            if (resProductsSimilar.data.message == 'Success') {
+                setProductsSimilar(resProductsSimilar.data.productsSimilar);
+            }
+        }
     };
 
     //find
@@ -180,6 +212,11 @@ const Product: React.FC<ProductProps> = (props) => {
     useEffect(() => {
         getData();
     }, []);
+    useEffect(() => {
+        if (user.id) {
+            setIsFavorite(checkIsFavorite(products, user.id));
+        }
+    }, [user]);
     return (
         <div>
             <Header />
@@ -195,7 +232,16 @@ const Product: React.FC<ProductProps> = (props) => {
                         {products ? shortedString(products.name, 24) : ''}
                     </div>
                 </div>
-                <div className="lg:grid  lg:grid-cols-2 box-shadow mt-3">
+                <div className="lg:grid  lg:grid-cols-2 box-shadow mt-3 relative">
+                    <Heart
+                        productCurrent={products}
+                        setProductCurrent={setProducts}
+                        isFavorite={isFavorite}
+                        bottom={undefined}
+                        right={3}
+                        top={4}
+                        left={undefined}
+                    />
                     {selectedProductDetail ? (
                         <SelectedProductDetailImage productDetail={selectedProductDetail} />
                     ) : null}
@@ -377,8 +423,49 @@ const Product: React.FC<ProductProps> = (props) => {
                         </div>
                     ) : null}
                 </div>
+                {shop ? (
+                    <div className="box-shadow p-3 rounded mt-6">
+                        <div className=" border-b border-gray-300 flex">
+                            <div
+                                style={{
+                                    borderBottomWidth: 3,
+                                }}
+                                className="font-bold text-2xl border-b border-solid  border-red-500"
+                            >
+                                {t('product.Shop')}
+                            </div>
+                        </div>
+
+                        <div className="flex mt-3 rounded-xl p-3">
+                            <div className="col-span-1 rounded flex items-center">
+                                <img
+                                    className="rounded-xl"
+                                    style={{ height: 120, objectFit: 'contain' }}
+                                    src={shop.image}
+                                />
+                            </div>
+                            <div className="col-span-2 ml-6">
+                                <div className="font-bold text-xl">{shop.name}</div>
+                                <div className="flex items-center mt-8">
+                                    <div>
+                                        <Button style={{ backgroundColor: 'white', color: 'black' }}>
+                                            <ChatIcon />
+                                            Chat ngay
+                                        </Button>
+                                    </div>
+                                    <div className="ml-3">
+                                        <Button onClick={() => (window.location.href = `/shop-view/${shop.id}`)}>
+                                            <PageviewIcon />
+                                            Xem shop
+                                        </Button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                ) : null}
                 {products ? (
-                    <>
+                    <div className="box-shadow p-3 rounded mt-6">
                         <div className="mt-6 border-b border-gray-300 flex">
                             <div
                                 style={{
@@ -444,7 +531,7 @@ const Product: React.FC<ProductProps> = (props) => {
                                     dangerouslySetInnerHTML={{
                                         __html: isExpandedDescribe
                                             ? products.describe
-                                            : products.describe.split('<p>').slice(0, 8).join('<p>'),
+                                            : products.describe.split('<p>').slice(0, 2).join('<p>'),
                                     }}
                                 ></div>
                                 {!isExpandedDescribe && <div className="fade-out"></div>}
@@ -458,10 +545,49 @@ const Product: React.FC<ProductProps> = (props) => {
                                 </button>
                             </div>
                         </div>
-                    </>
+                    </div>
                 ) : null}
+                <div className="box-shadow p-3 rounded mt-6">
+                    <div className="mt-6 border-b border-gray-300 flex">
+                        <div
+                            style={{
+                                borderBottomWidth: 3,
+                            }}
+                            className="font-bold text-2xl border-b border-solid  border-red-500"
+                        >
+                            {t('product.ProductSimilar')}
+                        </div>
+                    </div>
+                    {productsSimilar ? (
+                        <div className="mt-6">
+                            <MultiCaroselProduct listProduct={productsSimilar} />
+                        </div>
+                    ) : (
+                        <div className="mt-6 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6">
+                            <div>
+                                <SkeletonProductItem />
+                            </div>
+                            <div>
+                                <SkeletonProductItem />
+                            </div>
+                            <div>
+                                <SkeletonProductItem />
+                            </div>
+                            <div className="block sm:hidden lg:block">
+                                <SkeletonProductItem />
+                            </div>
+                            <div className="block lg:hidden xl:block">
+                                <SkeletonProductItem />
+                            </div>
+                            <div className="block lg:hidden xl:block">
+                                <SkeletonProductItem />
+                            </div>
+                        </div>
+                    )}
+                </div>
             </div>
             <DialogTips isOpen={isOpenDialogTips} setIsOpen={setIsOpenDialogTips} />
+            <Footer />
         </div>
     );
 };

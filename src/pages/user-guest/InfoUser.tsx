@@ -43,6 +43,7 @@ import CheckPasswordMeter from '../../components/user-guest/CheckPasswordMeter';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import Footer from '../../components/user-guest/footer/Footer';
 
 interface InfoUserProps {}
 
@@ -280,11 +281,11 @@ const InfoUser: React.FC<InfoUserProps> = (props) => {
     }, [user]);
 
     return (
-        <div>
+        <>
             <Header />
 
-            <div style={{ marginTop: 120 }} className="container z-10">
-                <div className="grid grid-cols-4  gap-4 container h-16">
+            <div style={{ marginTop: 120 }} className="container">
+                <div className="grid grid-cols-4 gap-4">
                     <div className="hidden lg:block col-span-1 bg-white box-shadow">
                         <LeftNav index={0} />
                     </div>
@@ -631,6 +632,8 @@ const InfoUser: React.FC<InfoUserProps> = (props) => {
                     </div>
                 </div>
             </div>
+            <Footer />
+
             <Dialog onClose={() => {}} open={openOtp}>
                 <Button className="mt-2 ml-2 w-2 mb-10 flex items-center justify-center" onClick={handleCloseDialog}>
                     <ArrowBackIcon />
@@ -663,7 +666,7 @@ const InfoUser: React.FC<InfoUserProps> = (props) => {
                     </Button>
                 </div>
             </Dialog>
-        </div>
+        </>
     );
 };
 export default InfoUser;

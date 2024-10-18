@@ -108,7 +108,7 @@ const Header: React.FC<HeaderProps> = (props) => {
                             style={{
                                 fontSize: '18px',
                             }}
-                            className="mr-3 ml-3 cursor-pointer font-normal text-3xl "
+                            className="mr-3 ml-3 cursor-pointer  text-3xl  hover:text-blue-500  transition-all duration-500"
                         >
                             {t('homepage.Category')}
                         </span>
@@ -116,7 +116,7 @@ const Header: React.FC<HeaderProps> = (props) => {
                             style={{
                                 fontSize: '18px',
                             }}
-                            className="mr-3 ml-3 cursor-pointer font-normal text-3xl "
+                            className="mr-3 ml-3 cursor-pointer  text-3xl hover:font-bold hover:text-blue-500 transition-all duration-500"
                         >
                             {t('homepage.New Product')}
                         </span>
@@ -124,7 +124,7 @@ const Header: React.FC<HeaderProps> = (props) => {
                             style={{
                                 fontSize: '18px',
                             }}
-                            className="mr-3 ml-3 cursor-pointer font-normal text-3xl "
+                            className="mr-3 ml-3 cursor-pointer  text-3xl hover:text-blue-500 transition-all duration-500"
                         >
                             {t('homepage.Men Fashion')}
                         </span>
@@ -132,7 +132,7 @@ const Header: React.FC<HeaderProps> = (props) => {
                             style={{
                                 fontSize: '18px',
                             }}
-                            className="mr-3 ml-3 cursor-pointer font-normal text-3xl "
+                            className="mr-3 ml-3 cursor-pointer  text-3xl hover:text-blue-500 transition-all duration-500"
                         >
                             {t('homepage.Women Fashion')}
                         </span>
@@ -175,7 +175,7 @@ const Header: React.FC<HeaderProps> = (props) => {
                 <DrawerSearch open={openSearch} toggleDrawer={toggleDrawerSearch} />
                 <DrawerCart open={openCart} toggleDrawer={toggleDrawerCart} />
             </div>
-            <div className="mt-6 mb-6 ml-12 mr-12 relative lg:hidden block bg-white">
+            <div style={{margin:120}} className="mt-6 mb-6 ml-12 mr-12 relative lg:hidden block bg-white">
                 <span className="absolute top-1 left-2">
                     <SearchIcon />
                 </span>

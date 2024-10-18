@@ -41,7 +41,19 @@ export const AlertAddShop = (createShop: any) => {
         }
     });
 };
-
+export const AlertLogin = () => {
+    Swal.fire({
+        title: 'Đăng nhập?',
+        showDenyButton: true,
+        confirmButtonText: 'Yes',
+        denyButtonText: `No`,
+    }).then((result: any) => {
+        if (result.isConfirmed) {
+            window.location.href = '/login-register';
+        } else if (result.isDenied) {
+        }
+    });
+};
 export const Alert = (handleBack: any, title: string) => {
     Swal.fire({
         title: title,

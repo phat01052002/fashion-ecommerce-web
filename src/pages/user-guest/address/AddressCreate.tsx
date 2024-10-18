@@ -14,6 +14,7 @@ import { add_item_address, change_is_loading, change_user } from '../../../reduc
 import { useLocation, useNavigate } from 'react-router-dom';
 import { filterInputNumber, toastSuccess, toastWarning } from '../../../untils/Logic';
 import Checkbox from '@mui/material/Checkbox';
+import Footer from '../../../components/user-guest/footer/Footer';
 
 interface CityProps {
     province_id: string;
@@ -154,7 +155,7 @@ const AddressCreate: React.FC<AddressCreateProps> = (props) => {
         <div>
             <Header />
             <div style={{ marginTop: 120 }} className="container z-10">
-                <div className="grid grid-cols-4  gap-4 container h-16">
+                <div className="grid grid-cols-4  gap-4 container">
                     <div className="hidden lg:block col-span-1 bg-white box-shadow">
                         <LeftNav index={10} />
                     </div>
@@ -269,6 +270,7 @@ const AddressCreate: React.FC<AddressCreateProps> = (props) => {
                     </div>
                 </div>
             </div>
+            <Footer />
         </div>
     );
 };

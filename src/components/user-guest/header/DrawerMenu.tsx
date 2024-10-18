@@ -9,6 +9,7 @@ import ListItemText from '@mui/material/ListItemText';
 import InboxIcon from '@mui/icons-material/MoveToInbox';
 import MailIcon from '@mui/icons-material/Mail';
 import { useTranslation } from 'react-i18next';
+import InventoryIcon from '@mui/icons-material/Inventory';
 interface DrawerMenuProps {
     open: boolean;
     toggleDrawer: any;
@@ -29,7 +30,7 @@ const DrawerMenu: React.FC<DrawerMenuProps> = (props) => {
                 ].map((text, index) => (
                     <ListItem key={text} disablePadding>
                         <ListItemButton>
-                            <ListItemIcon>{index % 2 === 0 ? <InboxIcon /> : <MailIcon />}</ListItemIcon>
+                            <ListItemIcon>{index % 2 === 0 ? <InventoryIcon /> : <InventoryIcon />}</ListItemIcon>
                             <ListItemText primary={text} />
                         </ListItemButton>
                     </ListItem>

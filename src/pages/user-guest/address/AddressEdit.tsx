@@ -16,6 +16,7 @@ import { filterInputNumber, toastSuccess, toastWarning } from '../../../untils/L
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { Alert } from '../../../components/alert/Alert';
 import Checkbox from '@mui/material/Checkbox';
+import Footer from '../../../components/user-guest/footer/Footer';
 
 interface CityProps {
     province_id: string;
@@ -184,7 +185,7 @@ const AddressEdit: React.FC<AddressEditProps> = (props) => {
         <div>
             <Header />
             <div style={{ marginTop: 120 }} className="container z-10">
-                <div className="grid grid-cols-4  gap-4 container h-16">
+                <div className="grid grid-cols-4  gap-4 container">
                     <div className="hidden lg:block col-span-1 bg-white box-shadow">
                         <LeftNav index={10} />
                     </div>
@@ -313,6 +314,7 @@ const AddressEdit: React.FC<AddressEditProps> = (props) => {
                     </div>
                 </div>
             </div>
+            <Footer />
         </div>
     );
 };

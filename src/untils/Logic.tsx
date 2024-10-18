@@ -143,3 +143,27 @@ export const removeItemFromCart = (id: string) => {
     const updatedCart = existingCart.filter((item: any) => item.productDetailId !== id);
     localStorage.setItem('listCart', JSON.stringify(updatedCart));
 };
+
+export const checkIsFollow = (shop: any, userId: string) => {
+    if (shop.userFollowIdList.length > 0) {
+        return shop.userFollowIdList.includes(userId);
+    } else {
+        return false;
+    }
+};
+export const checkIsFavorite = (product: any, userId: string) => {
+    if (product.userFavoriteIdList.length > 0) {
+        return product.userFavoriteIdList.includes(userId);
+    } else {
+        return false;
+    }
+};
+export function formatNumber(num: number) {
+    if (num >= 1e6) {
+        return (num / 1e6).toFixed(1) + 'M'; // Triệu
+    } else if (num >= 1e3) {
+        return (num / 1e3).toFixed(1) + 'k'; // Nghìn
+    } else {
+        return num.toString(); // Số nhỏ hơn 1000
+    }
+}
