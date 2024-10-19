@@ -40,6 +40,7 @@ export const filterSpecialInput = (value: any, setValue: any) => {
         .replace('script', '');
 
     setValue(value);
+    return value;
 };
 export const filterInput = (value: any, setValue: any) => {
     //value = value.replace(/[^a-zA-Z0-9àáảâáăạấầẩậặắẳòóọỏôồốổộơờớợởưừứửựùúụủìíịỉỳýỵỷeêếệểềéẹẻèiếđ" "]/g, '');
@@ -57,6 +58,38 @@ export const filterInputWebsite = (value: any, setValue: any) => {
 export const filterInputNumber = (value: any, setValue: any) => {
     value = value.replace(/[^0-9]/g, '');
     setValue(value);
+};
+
+export const filterInputNumberInCart = (
+    id: any,
+    value: any,
+    setValue: any,
+    productDetail: any,
+    setTotalPrice: any,
+    setTotalItem: any,
+    isCheck: boolean,
+    quantityOld: number,
+) => {
+    value = value.replace(/[^0-9]/g, '');
+    const existingCart = JSON.parse(localStorage.getItem('listCart') || '[]');
+    const productIndex = existingCart.findIndex((productDetail: any) => productDetail.productDetailId === id);
+    if (productIndex != -1) {
+        if (productDetail.quantity - parseInt(value) > 0 && parseInt(value) != 0) {
+            existingCart[productIndex].quantity = parseInt(value);
+            setValue(parseInt(value));
+            localStorage.setItem('listCart', JSON.stringify(existingCart));
+            if (isCheck) {
+                setTotalItem((prev: any) => (prev = prev - quantityOld + parseInt(value)));
+                setTotalPrice(
+                    (prev: any) =>
+                        (prev =
+                            prev -
+                            quantityOld * parseInt(productDetail.price) +
+                            parseInt(value) * parseInt(productDetail.price)),
+                );
+            }
+        }
+    }
 };
 export const checkIsEmail = (email: string) => {
     // Sử dụng biểu thức chính quy để kiểm tra định dạng email
@@ -138,6 +171,16 @@ export const findProductDetailInStore = (id: string) => {
     return existingCart.find((item: any, index: number) => item.productDetailId == id);
 };
 
+export const setCheckInStore = (id: string, isCheck: boolean) => {
+    console.log(id, isCheck);
+    const existingCart = JSON.parse(localStorage.getItem('listCart') || '[]');
+    const productIndex = existingCart.findIndex((productDetail: any) => productDetail.productDetailId === id);
+    if (productIndex != -1) {
+        existingCart[productIndex].isCheck = isCheck;
+        localStorage.setItem('listCart', JSON.stringify(existingCart));
+    }
+};
+
 export const removeItemFromCart = (id: string) => {
     const existingCart = JSON.parse(localStorage.getItem('listCart') || '[]');
     const updatedCart = existingCart.filter((item: any) => item.productDetailId !== id);
@@ -151,9 +194,9 @@ export const checkIsFollow = (shop: any, userId: string) => {
         return false;
     }
 };
-export const checkIsFavorite = (product: any, userId: string) => {
-    if (product.userFavoriteIdList.length > 0) {
-        return product.userFavoriteIdList.includes(userId);
+export const checkIsFavorite = (user: any, productId: string) => {
+    if (user.productFavoriteIdList.length > 0) {
+        return user.productFavoriteIdList.includes(productId);
     } else {
         return false;
     }

@@ -88,3 +88,20 @@ export const remove_item_from_cart = (payload: any) => {
         payload,
     };
 };
+
+export const set_number_favorite = (payload: any) => {
+    return {
+        type: 'SET_NUMBER_FAVOITE',
+        payload,
+    };
+};
+export const increase_number_favorite = () => {
+    return {
+        type: 'INCREASE_NUMBER_FAVOITE',
+    };
+};
+export const decrease_number_favorite = () => {
+    return {
+        type: 'DECREASE_NUMBER_FAVOITE',
+    };
+};

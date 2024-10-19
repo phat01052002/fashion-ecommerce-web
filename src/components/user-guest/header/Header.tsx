@@ -9,7 +9,7 @@ import SearchIcon from '@mui/icons-material/Search';
 import Badge from '@mui/material/Badge';
 import { useSelector, useStore } from 'react-redux';
 import { ReducerProps } from '../../../reducers/ReducersProps';
-import { set_number_cart } from '../../../reducers/Actions';
+import { set_number_cart, set_number_favorite } from '../../../reducers/Actions';
 import DrawerMenu from './DrawerMenu';
 import DrawerSearch from './DrawerSearch';
 import { TextField } from '@mui/material';
@@ -18,27 +18,39 @@ import HighlightOffIcon from '@mui/icons-material/HighlightOff';
 import { typeRole } from '../../../common/Common';
 import MenuUser from './MenuUser';
 import DrawerCart from './DrawerCart';
-interface HeaderProps {}
+import NotificationsIcon from '@mui/icons-material/Notifications';
+import DrawerFavorite from './DrawerFavorite';
+import { AlertLogin } from '../../alert/Alert';
+
+interface HeaderProps {
+    index?: number;
+}
 const Header: React.FC<HeaderProps> = (props) => {
+    const { index } = props;
     const nav = useNavigate();
     const { t } = useTranslation();
     const Logo = require('../../../static/Name.png');
     const numberCart = useSelector((state: ReducerProps) => state.numberCart);
+    const numberFavorite = useSelector((state: ReducerProps) => state.numberFavorite);
+
     const store = useStore();
     const [openMenu, setOpenMenu] = useState<boolean>(false);
     const [openSearch, setOpenSearch] = useState<boolean>(false);
     const [openCart, setOpenCart] = useState<boolean>(false);
+    const [openFavorite, setOpenFavorite] = useState<boolean>(false);
 
     const [search, setSearch] = useState<string>('');
     const role = useSelector((state: ReducerProps) => state.role);
     const user = useSelector((state: ReducerProps) => state.user);
-
     //
     const typingTimeoutRef = useRef<any>(null);
     if (typingTimeoutRef.current) {
         clearTimeout(typingTimeoutRef.current);
     }
     //
+    const toggleDrawerFavorite = (newOpen: boolean) => () => {
+        setOpenFavorite(newOpen);
+    };
     const toggleDrawerMenu = (newOpen: boolean) => () => {
         setOpenMenu(newOpen);
     };
@@ -74,6 +86,11 @@ const Header: React.FC<HeaderProps> = (props) => {
             }
         }, 500);
     }, [search]);
+    useEffect(() => {
+        if (user.id && numberFavorite == 0) {
+            store.dispatch(set_number_favorite(user.productFavoriteIdList.length));
+        }
+    }, [user]);
     return (
         <div>
             <div
@@ -105,10 +122,13 @@ const Header: React.FC<HeaderProps> = (props) => {
 
                     <div className="lg:flex hidden flex items-center justify-center col-span-4">
                         <span
+                            onClick={() => nav('/category')}
                             style={{
                                 fontSize: '18px',
                             }}
-                            className="mr-3 ml-3 cursor-pointer  text-3xl  hover:text-blue-500  transition-all duration-500"
+                            className={`mr-3 ml-3 cursor-pointer  text-3xl  hover:text-blue-500  transition-all duration-500  ${
+                                index == 0 ? 'font-bold text-blue-400 border-b border-blue-400' : ''
+                            }`}
                         >
                             {t('homepage.Category')}
                         </span>
@@ -116,7 +136,9 @@ const Header: React.FC<HeaderProps> = (props) => {
                             style={{
                                 fontSize: '18px',
                             }}
-                            className="mr-3 ml-3 cursor-pointer  text-3xl hover:font-bold hover:text-blue-500 transition-all duration-500"
+                            className={`mr-3 ml-3 cursor-pointer  text-3xl  hover:text-blue-500  transition-all duration-500  ${
+                                index == 1 ? 'font-bold text-blue-400 border-b border-blue-400' : ''
+                            }`}
                         >
                             {t('homepage.New Product')}
                         </span>
@@ -124,7 +146,9 @@ const Header: React.FC<HeaderProps> = (props) => {
                             style={{
                                 fontSize: '18px',
                             }}
-                            className="mr-3 ml-3 cursor-pointer  text-3xl hover:text-blue-500 transition-all duration-500"
+                            className={`mr-3 ml-3 cursor-pointer  text-3xl  hover:text-blue-500  transition-all duration-500  ${
+                                index == 2 ? 'font-bold text-blue-400 border-b border-blue-400' : ''
+                            }`}
                         >
                             {t('homepage.Men Fashion')}
                         </span>
@@ -132,7 +156,9 @@ const Header: React.FC<HeaderProps> = (props) => {
                             style={{
                                 fontSize: '18px',
                             }}
-                            className="mr-3 ml-3 cursor-pointer  text-3xl hover:text-blue-500 transition-all duration-500"
+                            className={`mr-3 ml-3 cursor-pointer  text-3xl  hover:text-blue-500  transition-all duration-500  ${
+                                index == 3 ? 'font-bold text-blue-400 border-b border-blue-400' : ''
+                            }`}
                         >
                             {t('homepage.Women Fashion')}
                         </span>
@@ -140,11 +166,25 @@ const Header: React.FC<HeaderProps> = (props) => {
 
                     <div className="flex items-center justify-end">
                         <span className="mr-3 ml-3 cursor-pointer scale">
-                            <FavoriteIcon color="primary" />
+                            <NotificationsIcon color="primary" />
+                        </span>
+                        <span className="mr-3 ml-3 cursor-pointer scale ">
+                            <Badge badgeContent={numberFavorite} color="error">
+                                <FavoriteIcon
+                                    color="primary"
+                                    onClick={() => {
+                                        if (role == typeRole.USER || role == typeRole.SHOP) {
+                                            setOpenFavorite(true);
+                                        } else {
+                                            AlertLogin();
+                                        }
+                                    }}
+                                />
+                            </Badge>
                         </span>
                         <span className="mr-3 ml-3 cursor-pointer scale">
                             <Badge badgeContent={numberCart} color="error">
-                                <LocalMallIcon color="primary" onClick={toggleDrawerCart(true)} />
+                                <LocalMallIcon color="primary" onClick={() => setOpenCart(true)} />
                             </Badge>
                         </span>
                         {role == typeRole.GUEST ? (
@@ -174,8 +214,12 @@ const Header: React.FC<HeaderProps> = (props) => {
                 <DrawerMenu open={openMenu} toggleDrawer={toggleDrawerMenu} />
                 <DrawerSearch open={openSearch} toggleDrawer={toggleDrawerSearch} />
                 <DrawerCart open={openCart} toggleDrawer={toggleDrawerCart} />
+                <DrawerFavorite open={openFavorite} toggleDrawer={toggleDrawerFavorite} />
             </div>
-            <div style={{margin:120}} className="mt-6 mb-6 ml-12 mr-12 relative lg:hidden block bg-white">
+            <div
+                style={{ margin: 120 }}
+                className={`mt-6 mb-6 ml-12 mr-12 relative lg:hidden block bg-white ${index == 0 ? 'hidden' : ''}`}
+            >
                 <span className="absolute top-1 left-2">
                     <SearchIcon />
                 </span>

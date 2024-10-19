@@ -1,5 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { filterInputNumber, findProductDetailInStore, formatPrice, removeItemFromCart } from '../../../untils/Logic';
+import {
+    filterInputNumber,
+    filterInputNumberInCart,
+    findProductDetailInStore,
+    formatPrice,
+    removeItemFromCart,
+    setCheckInStore,
+} from '../../../untils/Logic';
 import { Divider } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '../../ComponentsLogin';
@@ -14,14 +21,20 @@ import {
 } from '../../../reducers/Actions';
 import { ReducerProps } from '../../../reducers/ReducersProps';
 import { useTranslation } from 'react-i18next';
+import Checkbox from '@mui/material/Checkbox';
 interface CartItemProps {
     productDetail: any;
+    setTotalPrice: any;
+    setTotalItem: any;
 }
+const label = { inputProps: { 'aria-label': 'Checkbox demo' } };
+
 const CartItem: React.FC<CartItemProps> = (props) => {
-    const { productDetail } = props;
+    const { productDetail, setTotalPrice, setTotalItem } = props;
     const productDetailInStore = findProductDetailInStore(productDetail.id);
     const [quantity, setQuantity] = useState<number>(0);
     const numberCart = useSelector((state: ReducerProps) => state.numberCart);
+    const [isCheck, setIsCheck] = useState<boolean>(false);
     const nav = useNavigate();
     const store = useStore();
     const { t } = useTranslation();
@@ -33,6 +46,11 @@ const CartItem: React.FC<CartItemProps> = (props) => {
             const productIndex = existingCart.findIndex((item: any) => item.productDetailId === productDetail.id);
             existingCart[productIndex].quantity -= 1;
             localStorage.setItem('listCart', JSON.stringify(existingCart));
+            //
+            if (isCheck) {
+                setTotalPrice((prev: any) => (prev -= parseInt(productDetail.price)));
+                setTotalItem((prev: any) => (prev -= 1));
+            }
         }
     };
     const handleDeleleInStore = () => {
@@ -48,14 +66,35 @@ const CartItem: React.FC<CartItemProps> = (props) => {
             const productIndex = existingCart.findIndex((item: any) => item.productDetailId === productDetail.id);
             existingCart[productIndex].quantity += 1;
             localStorage.setItem('listCart', JSON.stringify(existingCart));
+            //
+            if (isCheck) {
+                setTotalPrice((prev: any) => (prev += parseInt(productDetail.price)));
+                setTotalItem((prev: any) => (prev += 1));
+            }
         }
     };
     const handleClickItem = () => {
         window.location.href = `/product/${productDetail.productId}`;
     };
+    const handleCheck = () => {
+        setCheckInStore(productDetailInStore.productDetailId, !isCheck);
+        //if check
+        if (!isCheck) {
+            setTotalPrice((prev: any) => (prev += parseInt(productDetail.price) * quantity));
+            setTotalItem((prev: any) => (prev = parseInt(prev) + quantity));
+        } else {
+            setTotalPrice((prev: any) => (prev -= parseInt(productDetail.price) * quantity));
+            setTotalItem((prev: any) => (prev = parseInt(prev) - quantity));
+        }
+    };
     useEffect(() => {
         if (productDetailInStore) {
             setQuantity(productDetailInStore.quantity);
+            setIsCheck(productDetailInStore.isCheck);
+        }
+        if (productDetailInStore.isCheck) {
+            setTotalPrice((prev: any) => (prev += parseInt(productDetail.price) * productDetailInStore.quantity));
+            setTotalItem((prev: any) => (prev += parseInt(productDetailInStore.quantity)));
         }
     }, []);
     return (
@@ -66,6 +105,21 @@ const CartItem: React.FC<CartItemProps> = (props) => {
             }}
             className="border border-gray-300 mb-3 rounded relative"
         >
+            <div
+                style={{
+                    top: 0,
+                    left: -50,
+                }}
+                className="absolute"
+            >
+                <Checkbox
+                    {...label}
+                    checked={isCheck}
+                    onChange={() => setIsCheck((prev) => !prev)}
+                    onClick={handleCheck}
+                />
+            </div>
+
             <div
                 className="absolute top-0 right-0 hover:bg-red-400 cursor-pointer p-1 rounded"
                 onClick={handleDeleleInStore}
@@ -116,7 +170,16 @@ const CartItem: React.FC<CartItemProps> = (props) => {
                             if (e.target.value <= productDetail.quantity) {
                                 if (e.target.value.toString() == '') {
                                 } else {
-                                    filterInputNumber(e.target.value, setQuantity);
+                                    filterInputNumberInCart(
+                                        productDetailInStore.productDetailId,
+                                        e.target.value,
+                                        setQuantity,
+                                        productDetail,
+                                        setTotalPrice,
+                                        setTotalItem,
+                                        isCheck,
+                                        quantity,
+                                    );
                                 }
                             }
                         }}

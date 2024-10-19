@@ -5,4 +5,5 @@ export interface ReducerProps {
     isLoading: boolean;
     listAddress: any;
     listItemInCart: any;
+    numberFavorite: number;
 }

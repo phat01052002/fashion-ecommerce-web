@@ -112,6 +112,10 @@ export const initI18n = (lng: string) => {
                         ProductSimilar: 'Sản phẩm tương tự',
                         Total: 'Tổng',
                         Buy: 'Mua',
+                        ProductTop: 'Sản phẩm bán chạy',
+                    },
+                    category: {
+                        Categorys: 'Tất cả danh mục',
                     },
                 },
             },
@@ -223,6 +227,10 @@ export const initI18n = (lng: string) => {
                         ProductSimilar: 'Product Similar',
                         Total: 'Total',
                         Buy: 'Buy',
+                        ProductTop: 'ProductTop',
+                    },
+                    category: {
+                        Categorys: 'Categorys',
                     },
                 },
             },

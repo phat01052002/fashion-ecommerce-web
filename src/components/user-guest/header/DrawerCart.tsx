@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import Box from '@mui/material/Box';
 import Drawer from '@mui/material/Drawer';
 import KeyboardBackspaceIcon from '@mui/icons-material/KeyboardBackspace';
@@ -34,17 +34,32 @@ const DrawerCart: React.FC<DrawerCartProps> = (props) => {
     //get data in cart
     const getDataInCart = async () => {
         const listCart = JSON.parse(localStorage.getItem('listCart') || '[]');
-        listCart.map(async (item: any, index: number) => {
+        const a = await listCart.map(async (item: any, index: number) => {
             const resProductDetail = await GetGuestApi(`/api/product-detail/${item.productDetailId}`);
             if (resProductDetail.data.message == 'Success') {
                 store.dispatch(add_list_item_in_cart(resProductDetail.data.productDetail));
             }
         });
     };
-
+    const groupedByShopId = () => {
+        return listItemInCart.reduce((accumulator: any, current: any) => {
+            const { productId } = current;
+            if (!accumulator[productId]) {
+                accumulator[productId] = [];
+            }
+            accumulator[productId].push(current);
+            return accumulator;
+        }, {});
+    };
+    //
     useEffect(() => {
         if (localStorage.getItem('listCart')) getDataInCart();
     }, []);
+    useEffect(() => {
+        if (listItemInCart.length > 0) {
+            // console.log(groupedByShopId());
+        }
+    }, [listItemInCart]);
     const DrawerList = (
         <Box sx={{ width: '100%', minWidth: 400 }} role="presentation">
             <div className="mt-3 ml-3 mb-3 flex justify-start items-center ">
@@ -69,7 +84,12 @@ const DrawerCart: React.FC<DrawerCartProps> = (props) => {
                                   }}
                                   transition={{ duration: 0.2 }}
                               >
-                                  <CartItem key={productDetail.id} productDetail={productDetail} />
+                                  <CartItem
+                                      key={productDetail.id}
+                                      productDetail={productDetail}
+                                      setTotalPrice={setTotalPrice}
+                                      setTotalItem={setTotalItem}
+                                  />
                               </motion.li>
                           ))
                         : null}

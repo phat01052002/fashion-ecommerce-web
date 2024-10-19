@@ -5,6 +5,7 @@ const initialState = {
     listAddress: [],
     isLoading: false,
     listItemInCart: [],
+    numberFavorite: 0,
 };
 const myReducer = (state = initialState, action: any) => {
     switch (action.type) {
@@ -27,6 +28,21 @@ const myReducer = (state = initialState, action: any) => {
             return {
                 ...state,
                 numberCart: state.numberCart + action.payload,
+            };
+        case 'SET_NUMBER_FAVOITE':
+            return {
+                ...state,
+                numberFavorite: state.numberFavorite + action.payload,
+            };
+        case 'INCREASE_NUMBER_FAVOITE':
+            return {
+                ...state,
+                numberFavorite: (state.numberFavorite += 1),
+            };
+        case 'DECREASE_NUMBER_FAVOITE':
+            return {
+                ...state,
+                numberFavorite: (state.numberFavorite -= 1),
             };
         case 'DECREASE_NUMBER_CART':
             return {
@@ -74,7 +90,6 @@ const myReducer = (state = initialState, action: any) => {
             const productIndex = state.listItemInCart.findIndex(
                 (productDetail: any) => action.payload.id == productDetail.id,
             );
-            console.log(productIndex);
             if (productIndex == -1) {
                 return {
                     ...state,

@@ -17,6 +17,8 @@ import ShopHome from '../pages/shop/ShopHome';
 import Product from '../pages/user-guest/Product';
 import Page404 from '../pages/default/page404';
 import ShopView from '../pages/user-guest/ShopView';
+import Category from '../pages/user-guest/category/Category';
+import CategoryView from '../pages/user-guest/category/CategoryView';
 
 interface MainRoutersProps {}
 const MainRouters: React.FC<MainRoutersProps> = (props) => {
@@ -29,6 +31,8 @@ const MainRouters: React.FC<MainRoutersProps> = (props) => {
             <Route path="/err404" element={<Page404 />}></Route>
             <Route path="/product/:productId" element={<Product />}></Route>
             <Route path="/shop-view/:shopId" element={<ShopView />}></Route>
+            <Route path="/category" element={<Category />}></Route>
+            <Route path="/category-view/:categoryId" element={<CategoryView />}></Route>
         </>
     );
     //return router suitable for role

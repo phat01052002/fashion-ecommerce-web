@@ -5,7 +5,7 @@ import { Box } from '@mui/material';
 
 const SkeletonProductItem: React.FC<any> = (props) => {
     return (
-        <div className='flex justify-center'>
+        <div className="flex justify-center">
             <div>
                 <Skeleton className="rounded" variant="rectangular" width={210} height={150} />
                 <Skeleton className="mt-1 rounded" width={210} height={60} />

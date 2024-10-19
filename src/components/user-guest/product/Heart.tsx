@@ -1,10 +1,15 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import { useSelector, useStore } from 'react-redux';
 import { ReducerProps } from '../../../reducers/ReducersProps';
 import { typeRole } from '../../../common/Common';
-import { change_is_loading, change_user } from '../../../reducers/Actions';
+import {
+    change_is_loading,
+    change_user,
+    decrease_number_favorite,
+    increase_number_favorite,
+} from '../../../reducers/Actions';
 import { PostApi } from '../../../untils/Api';
 import { AlertLogin } from '../../alert/Alert';
 interface HeartProps {
@@ -21,9 +26,10 @@ const Heart: React.FC<HeartProps> = (props) => {
     const store = useStore();
     const user = useSelector((state: ReducerProps) => state.user);
     const role = useSelector((state: ReducerProps) => state.role);
+    const [isChange, setIsChange] = useState(false);
     const handleUnFavorite = async () => {
         store.dispatch(change_is_loading(true));
-        if (role == typeRole.USER) {
+        if ((role == typeRole.USER || role == typeRole.SHOP) && user.shopId != productCurrent.shopId) {
             if (user.productFavoriteIdList.includes(productCurrent.id)) {
                 const resFavorite = await PostApi('/user/un-favorite-product', localStorage.getItem('token'), {
                     productId: productCurrent.id,
@@ -35,6 +41,8 @@ const Heart: React.FC<HeartProps> = (props) => {
                         (item: any) => item !== user.id,
                     );
                     setProductCurrent(new_product);
+                    //
+                    store.dispatch(decrease_number_favorite());
                 }
             }
         }
@@ -42,7 +50,7 @@ const Heart: React.FC<HeartProps> = (props) => {
     };
     const handleFavorite = async () => {
         store.dispatch(change_is_loading(true));
-        if (role == typeRole.USER) {
+        if ((role == typeRole.USER || role == typeRole.SHOP) && user.shopId != productCurrent.shopId) {
             if (!user.productFavoriteIdList.includes(productCurrent.id)) {
                 const resFavorite = await PostApi('/user/favorite-product', localStorage.getItem('token'), {
                     productId: productCurrent.id,
@@ -52,6 +60,8 @@ const Heart: React.FC<HeartProps> = (props) => {
                     let new_product = productCurrent;
                     new_product.userFavoriteIdList = [...new_product.userFavoriteIdList, user.id];
                     setProductCurrent(new_product);
+                    //
+                    store.dispatch(increase_number_favorite());
                 }
             }
         } else {
@@ -59,18 +69,28 @@ const Heart: React.FC<HeartProps> = (props) => {
         }
         store.dispatch(change_is_loading(false));
     };
+    useEffect(() => {
+        if (isChange) {
+            if (isFavorite) {
+                handleUnFavorite();
+            } else {
+                handleFavorite();
+            }
+            setIsChange(false);
+        }
+    }, [isChange]);
     return (
         <div className={`absolute bottom-${bottom} right-${right} top-${top} left-${left} flex items-center`}>
             {isFavorite ? (
                 <div
-                    onClick={handleUnFavorite}
+                    onClick={() => setIsChange(true)}
                     className="ml-3 transition-transform transform cursor-pointer hover:scale-110 duration-300"
                 >
                     <FavoriteIcon sx={{ height: 29, width: 29 }} className="text-blue-500" />
                 </div>
             ) : (
                 <div
-                    onClick={handleFavorite}
+                    onClick={() => setIsChange(true)}
                     className="ml-3 transition-transform transform cursor-pointer hover:scale-110 duration-300"
                 >
                     <FavoriteBorderIcon sx={{ height: 29, width: 29 }} className="text-blue-500" />

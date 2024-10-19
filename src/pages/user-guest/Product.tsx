@@ -213,10 +213,10 @@ const Product: React.FC<ProductProps> = (props) => {
         getData();
     }, []);
     useEffect(() => {
-        if (user.id) {
-            setIsFavorite(checkIsFavorite(products, user.id));
+        if (user.id && products) {
+            setIsFavorite(checkIsFavorite(user, products.id));
         }
-    }, [user]);
+    }, [user, products]);
     return (
         <div>
             <Header />
@@ -272,8 +272,6 @@ const Product: React.FC<ProductProps> = (props) => {
                                             <div
                                                 style={{
                                                     minWidth: 50,
-                                                    maxWidth: 60,
-                                                    height: 50,
                                                 }}
                                                 className={`relative m-3 p-3  border-gray-300 rounded cursor-pointer flex items-center justify-center ${
                                                     option1 == size ? 'border-blue-500 border-4' : 'border'
@@ -587,7 +585,7 @@ const Product: React.FC<ProductProps> = (props) => {
                 </div>
             </div>
             <DialogTips isOpen={isOpenDialogTips} setIsOpen={setIsOpenDialogTips} />
-            <Footer />
+            {products ? <Footer /> : null}
         </div>
     );
 };
